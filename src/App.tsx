@@ -66,12 +66,14 @@ function App() {
 
             const response = await fetch(API_URL, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                //headers: {
+                  //  "Content-Type": "application/json",
+                //},
                 body: JSON.stringify({
-                    session_id: userId,           // 👈 identificador único
-                    request_id: Date.now().toString(),
+                    //session_id: userId,           // 👈 identificador único
+                    //request_id: Date.now().toString(),
+                    "session_id": "AnderssonH",     //Identificador temporal    
+                    "request_id": "1",
                     text,
                 }),
             });
