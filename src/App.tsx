@@ -13,7 +13,7 @@ import Login from "./pages/Login";
 import "./App.css";
 
 /* 🔧 CONFIGURACIÓN */
-const USE_MOCK_API = false;
+//const USE_MOCK_API = false;
 const API_URL = import.meta.env.VITE_CHAT_API_URL;
 
 if (!API_URL) {
@@ -64,37 +64,43 @@ function App() {
         try {
             setLoading(true);
 
+            const payload = {
+                //session_id: userId,
+                //request_id: Date.now().toString(),
+                session_id: "AnderssonH",
+                request_id: "1",
+                text,
+            };
+
+            // 👀 LOG CLAVE
+            console.group("📤 Enviando request al chatbot");
+            console.log("URL:", API_URL);
+            console.log("Headers:", {
+                "Content-Type": "application/json",
+            });
+            console.log("Body:", payload);
+            console.groupEnd();
+
             const response = await fetch(API_URL, {
                 method: "POST",
-                //headers: {
-                  //  "Content-Type": "application/json",
-                //},
-                body: JSON.stringify({
-                    //session_id: userId,           // 👈 identificador único
-                    //request_id: Date.now().toString(),
-                    "session_id": "AnderssonH",     //Identificador temporal    
-                    "request_id": "1",
-                    text,
-                }),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
             });
 
             if (!response.ok) {
+                console.error("❌ Status HTTP:", response.status);
                 throw new Error("Error HTTP");
             }
 
             const data = await response.json();
 
-            if (USE_MOCK_API) {
-                return `Echo mock: ${text}`;
-            }
-
-            if (data.status !== "Succes") {
-                throw new Error("Error de negocio");
-            }
+            console.log("📥 Respuesta backend:", data);
 
             return data.response;
         } catch (error) {
-            console.error(error);
+            console.error("🔥 Error en fetch:", error);
             return "❌ Error al conectar con el bot";
         } finally {
             setLoading(false);
