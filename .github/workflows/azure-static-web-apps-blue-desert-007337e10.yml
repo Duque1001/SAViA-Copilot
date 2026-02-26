@@ -37,6 +37,7 @@ jobs:
           VITE_ENTRA_TENANT_ID: ${{ secrets.VITE_ENTRA_TENANT_ID }}
           VITE_API_SCOPE: ${{ secrets.VITE_API_SCOPE }}
           VITE_CHAT_API_URL: ${{ secrets.VITE_CHAT_API_URL }}
+          VITE_ENTRA_CIAM_DOMAIN: ${{ secrets.VITE_ENTRA_CIAM_DOMAIN }}
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
@@ -49,5 +50,6 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_BLUE_DESERT_007337E10 }}
           action: "close"
+
 
 
