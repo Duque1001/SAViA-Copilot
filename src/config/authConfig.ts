@@ -20,8 +20,12 @@ if (!CIAM_DOMAIN) throw new Error("VITE_ENTRA_CIAM_DOMAIN no está definida");
 const AUTHORITY = `https://${CIAM_DOMAIN}/${TENANT_ID}/`;
 
 // Redirects en local
-const REDIRECT_URI = "http://localhost:3000";
-const POST_LOGOUT_REDIRECT_URI = "http://localhost:3000";
+//const REDIRECT_URI = "http://localhost:3000";
+//const POST_LOGOUT_REDIRECT_URI = "http://localhost:3000";
+
+//PRD
+const REDIRECT_URI = "https://blue-desert-007337e10.1.azurestaticapps.net/";
+const POST_LOGOUT_REDIRECT_URI = "https://blue-desert-007337e10.1.azurestaticapps.net/";
 
 export const msalConfig = {
     auth: {
