@@ -3,6 +3,11 @@ import { useIsAuthenticated, useMsal } from "@azure/msal-react";
 import {
     clearSession,
     acquireAccessToken,
+    getName,
+    getUniqueName,
+    isTokenValidated,
+    getIdToken,
+    validateIdTokenWithRetry,
 } from "./config/session";
 
 import ChatWindow from "./components/ChatWindow";
@@ -11,14 +16,11 @@ import Header from "./components/Header";
 import Login from "./pages/Login";
 
 import "./App.css";
+import "./styles/Login.css";
 
 /* 🔧 CONFIGURACIÓN */
-//const USE_MOCK_API = false;
 const RAW_API_URL = import.meta.env.VITE_CHAT_API_URL;
-
-if (!RAW_API_URL) {
-    throw new Error("VITE_CHAT_API_URL no está definida");
-}
+if (!RAW_API_URL) throw new Error("VITE_CHAT_API_URL no está definida");
 
 // 🔹 elimina SOLO el slash final si existe
 const API_URL = RAW_API_URL.replace(/\/$/, "");
@@ -29,27 +31,67 @@ interface Message {
     text: string;
 }
 
+type GuardErrorType = "denied" | "transient" | null;
+
 function App() {
     /* 🔐 ENTRA ID */
     const isAuthenticated = useIsAuthenticated();
     const { instance, accounts } = useMsal();
 
     /* 👤 EMAIL DEL USUARIO */
-    const email =
-        accounts.length > 0
-            ? accounts[0].username
-            : "";
+    const email = accounts.length > 0 ? accounts[0].username : "";
 
     /* 👤 USER ID (antes del @) */
-    const userId = email.includes("@")
-        ? email.split("@")[0]
-        : email || "Usuario";
+    const userId = email.includes("@") ? email.split("@")[0] : email || "Usuario";
 
-    /* 🔑 OBTENER TOKEN (solo para sesión Entra, NO para API) */
-    useEffect(() => {
-        if (isAuthenticated && accounts.length > 0) {
-            acquireAccessToken(instance, accounts[0]).catch(console.error);
+    /* ✅ Validación previa a mostrar la App */
+    const [validated, setValidated] = useState<boolean>(isTokenValidated());
+    const [validating, setValidating] = useState<boolean>(!isTokenValidated());
+    const [guardError, setGuardError] = useState<GuardErrorType>(null);
+
+    const runValidation = async () => {
+        if (!isAuthenticated) return;
+
+        setGuardError(null);
+
+        if (isTokenValidated()) {
+            setValidated(true);
+            setValidating(false);
+            if (accounts.length > 0) acquireAccessToken(instance, accounts[0]).catch(console.error);
+            return;
         }
+
+        const idToken = getIdToken();
+        if (!idToken) {
+            setValidating(false);
+            setValidated(false);
+            setGuardError("denied");
+            return;
+        }
+
+        setValidating(true);
+        const val = await validateIdTokenWithRetry(idToken, 3);
+
+        if (val.ok) {
+            setValidated(true);
+            setValidating(false);
+            if (accounts.length > 0) acquireAccessToken(instance, accounts[0]).catch(console.error);
+        } else if (val.denied) {
+            // Rechazo explícito
+            setValidating(false);
+            setValidated(false);
+            setGuardError("denied");
+        } else {
+            // Fallo transitorio tras agotar reintentos
+            setValidating(false);
+            setValidated(false);
+            setGuardError("transient");
+        }
+    };
+
+    useEffect(() => {
+        runValidation().catch(console.error);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isAuthenticated, accounts, instance]);
 
     const handleLogout = () => {
@@ -67,40 +109,24 @@ function App() {
         try {
             setLoading(true);
 
+            const storedName = getName();
+            const storedUnique = getUniqueName();
+
             const payload = {
-                //session_id: userId,
-                //request_id: Date.now().toString(),
-                session_id: "AnderssonH",
+                session_id: storedUnique || storedName || userId,
                 request_id: "1",
                 text,
             };
 
-            // 👀 LOG CLAVE
-            console.group("📤 Enviando request al chatbot");
-            console.log("URL:", API_URL);
-            console.log("Headers:", {
-                "Content-Type": "application/json",
-            });
-            console.log("Body:", payload);
-            console.groupEnd();
-
             const response = await fetch(API_URL, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
             });
 
-            if (!response.ok) {
-                console.error("❌ Status HTTP:", response.status);
-                throw new Error("Error HTTP");
-            }
+            if (!response.ok) throw new Error("Error HTTP");
 
             const data = await response.json();
-
-            console.log("📥 Respuesta backend:", data);
-
             return data.response;
         } catch (error) {
             console.error("🔥 Error en fetch:", error);
@@ -127,28 +153,57 @@ function App() {
 
         setMessages((prev) => {
             const updated = [...prev];
-            updated[updated.length - 1] = {
-                from: "bot",
-                text: botResponse,
-            };
+            updated[updated.length - 1] = { from: "bot", text: botResponse };
             return updated;
         });
     };
 
-    /* 🔀 LOGIN */
-    if (!isAuthenticated) {
-        return <Login />;
+    /* 🔀 LOGIN o GUARD */
+    if (!isAuthenticated) return <Login />;
+
+    if (validating) {
+        return (
+            <div className="login-container" style={{ padding: 24 }}>
+                <h3>Validando sesión…</h3>
+                <p>Por favor espera un momento.</p>
+            </div>
+        );
     }
+
+    if (!validated) {
+        // Mensajes diferenciados por causa
+        if (guardError === "denied") {
+            return (
+                <div className="login-container" style={{ padding: 24 }}>
+                    <h3>Validación rechazada</h3>
+                    <p>El validador externo no aprobó tu sesión. Por favor, cierra sesión e inténtalo nuevamente.</p>
+                    <button onClick={handleLogout}>Cerrar sesión</button>
+                </div>
+            );
+        }
+
+        // transitorio (o desconocido)
+        return (
+            <div className="login-container" style={{ padding: 24 }}>
+                <h3>No fue posible validar la sesión</h3>
+                <p>Puede ser un problema temporal de red o del validador. Puedes reintentar o cerrar sesión.</p>
+                <button onClick={runValidation}>Reintentar</button>
+                <button onClick={handleLogout} style={{ marginLeft: 12 }}>Cerrar sesión</button>
+            </div>
+        );
+    }
+
+    // Datos para Header
+    const displayName = getName() || getUniqueName() || userId;
 
     return (
         <div className="app">
-            {/* 🧠 HEADER */}
             <Header
-                username={userId}   // 👈 solo lo que va antes del @
+                username={userId}
+                displayName={displayName}
                 onLogout={handleLogout}
             />
 
-            {/* 💬 CHAT */}
             <ChatWindow messages={messages} />
             <ChatInput
                 value={input}

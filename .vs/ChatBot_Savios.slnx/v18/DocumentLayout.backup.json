@@ -3,12 +3,8 @@
   "WorkspaceRootPath": "D:\\01 - SAVIOS\\GitHub\\ChatBot_Savios\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{AEE41F59-469B-ECE6-867F-A6C5CD3DAE3F}|chatbot_savios.esproj|d:\\01 - savios\\github\\chatbot_savios\\src\\app.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
-      "RelativeMoniker": "D:0:0:{AEE41F59-469B-ECE6-867F-A6C5CD3DAE3F}|chatbot_savios.esproj|solutionrelative:src\\app.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AEE41F59-469B-ECE6-867F-A6C5CD3DAE3F}|chatbot_savios.esproj|d:\\01 - savios\\github\\chatbot_savios\\src\\pages\\login.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
-      "RelativeMoniker": "D:0:0:{AEE41F59-469B-ECE6-867F-A6C5CD3DAE3F}|chatbot_savios.esproj|solutionrelative:src\\pages\\login.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+      "AbsoluteMoniker": "D:0:0:{AEE41F59-469B-ECE6-867F-A6C5CD3DAE3F}|chatbot_savios.esproj|d:\\01 - savios\\github\\chatbot_savios\\.env.local||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{AEE41F59-469B-ECE6-867F-A6C5CD3DAE3F}|chatbot_savios.esproj|solutionrelative:.env.local||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{AEE41F59-469B-ECE6-867F-A6C5CD3DAE3F}|chatbot_savios.esproj|d:\\01 - savios\\github\\chatbot_savios\\src\\config\\session.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
@@ -19,24 +15,24 @@
       "RelativeMoniker": "D:0:0:{AEE41F59-469B-ECE6-867F-A6C5CD3DAE3F}|chatbot_savios.esproj|solutionrelative:src\\config\\authconfig.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AEE41F59-469B-ECE6-867F-A6C5CD3DAE3F}|chatbot_savios.esproj|d:\\01 - savios\\github\\chatbot_savios\\index.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{AEE41F59-469B-ECE6-867F-A6C5CD3DAE3F}|chatbot_savios.esproj|solutionrelative:index.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{AEE41F59-469B-ECE6-867F-A6C5CD3DAE3F}|chatbot_savios.esproj|d:\\01 - savios\\github\\chatbot_savios\\src\\pages\\login.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{AEE41F59-469B-ECE6-867F-A6C5CD3DAE3F}|chatbot_savios.esproj|solutionrelative:src\\pages\\login.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AEE41F59-469B-ECE6-867F-A6C5CD3DAE3F}|chatbot_savios.esproj|d:\\01 - savios\\github\\chatbot_savios\\src\\styles\\chat.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{AEE41F59-469B-ECE6-867F-A6C5CD3DAE3F}|chatbot_savios.esproj|solutionrelative:src\\styles\\chat.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+      "AbsoluteMoniker": "D:0:0:{AEE41F59-469B-ECE6-867F-A6C5CD3DAE3F}|chatbot_savios.esproj|d:\\01 - savios\\github\\chatbot_savios\\src\\app.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{AEE41F59-469B-ECE6-867F-A6C5CD3DAE3F}|chatbot_savios.esproj|solutionrelative:src\\app.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AEE41F59-469B-ECE6-867F-A6C5CD3DAE3F}|chatbot_savios.esproj|d:\\01 - savios\\github\\chatbot_savios\\src\\app.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{AEE41F59-469B-ECE6-867F-A6C5CD3DAE3F}|chatbot_savios.esproj|solutionrelative:src\\app.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+      "AbsoluteMoniker": "D:0:0:{AEE41F59-469B-ECE6-867F-A6C5CD3DAE3F}|chatbot_savios.esproj|d:\\01 - savios\\github\\chatbot_savios\\src\\components\\header.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{AEE41F59-469B-ECE6-867F-A6C5CD3DAE3F}|chatbot_savios.esproj|solutionrelative:src\\components\\header.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AEE41F59-469B-ECE6-867F-A6C5CD3DAE3F}|chatbot_savios.esproj|d:\\01 - savios\\github\\chatbot_savios\\src\\styles\\header.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{AEE41F59-469B-ECE6-867F-A6C5CD3DAE3F}|chatbot_savios.esproj|solutionrelative:src\\styles\\header.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+      "AbsoluteMoniker": "D:0:0:{AEE41F59-469B-ECE6-867F-A6C5CD3DAE3F}|chatbot_savios.esproj|d:\\01 - savios\\github\\chatbot_savios\\src\\index.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{AEE41F59-469B-ECE6-867F-A6C5CD3DAE3F}|chatbot_savios.esproj|solutionrelative:src\\index.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AEE41F59-469B-ECE6-867F-A6C5CD3DAE3F}|chatbot_savios.esproj|d:\\01 - savios\\github\\chatbot_savios\\src\\components\\chatwindow.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
-      "RelativeMoniker": "D:0:0:{AEE41F59-469B-ECE6-867F-A6C5CD3DAE3F}|chatbot_savios.esproj|solutionrelative:src\\components\\chatwindow.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+      "AbsoluteMoniker": "D:0:0:{AEE41F59-469B-ECE6-867F-A6C5CD3DAE3F}|chatbot_savios.esproj|d:\\01 - savios\\github\\chatbot_savios\\src\\main.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{AEE41F59-469B-ECE6-867F-A6C5CD3DAE3F}|chatbot_savios.esproj|solutionrelative:src\\main.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -46,129 +42,115 @@
       "DocumentGroups": [
         {
           "DockedWidth": 10,
-          "SelectedChildIndex": 8,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{1c64b9c2-e352-428e-a56d-0ace190b99a6}"
-            },
-            {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "authConfig.ts",
-              "DocumentMoniker": "D:\\01 - SAVIOS\\GitHub\\ChatBot_Savios\\src\\config\\authConfig.ts",
-              "RelativeDocumentMoniker": "src\\config\\authConfig.ts",
-              "ToolTip": "D:\\01 - SAVIOS\\GitHub\\ChatBot_Savios\\src\\config\\authConfig.ts",
-              "RelativeToolTip": "src\\config\\authConfig.ts",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAACAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2026-02-25T13:44:57.197Z",
+              "DocumentIndex": 0,
+              "Title": ".env.local",
+              "DocumentMoniker": "D:\\01 - SAVIOS\\GitHub\\ChatBot_Savios\\.env.local",
+              "RelativeDocumentMoniker": ".env.local",
+              "ToolTip": "D:\\01 - SAVIOS\\GitHub\\ChatBot_Savios\\.env.local",
+              "RelativeToolTip": ".env.local",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAhAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-02-26T21:52:58.712Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "Login.tsx",
               "DocumentMoniker": "D:\\01 - SAVIOS\\GitHub\\ChatBot_Savios\\src\\pages\\Login.tsx",
               "RelativeDocumentMoniker": "src\\pages\\Login.tsx",
               "ToolTip": "D:\\01 - SAVIOS\\GitHub\\ChatBot_Savios\\src\\pages\\Login.tsx",
               "RelativeToolTip": "src\\pages\\Login.tsx",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACMAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAADwAAAAAAAAAAAAowJ8AAAACAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2026-02-25T13:44:30.642Z",
+              "WhenOpened": "2026-02-26T19:56:18.325Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "session.ts",
               "DocumentMoniker": "D:\\01 - SAVIOS\\GitHub\\ChatBot_Savios\\src\\config\\session.ts",
               "RelativeDocumentMoniker": "src\\config\\session.ts",
               "ToolTip": "D:\\01 - SAVIOS\\GitHub\\ChatBot_Savios\\src\\config\\session.ts",
               "RelativeToolTip": "src\\config\\session.ts",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAACAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAFMAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2026-02-25T13:44:00.734Z",
+              "WhenOpened": "2026-02-26T19:55:56.592Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "index.html",
-              "DocumentMoniker": "D:\\01 - SAVIOS\\GitHub\\ChatBot_Savios\\index.html",
-              "RelativeDocumentMoniker": "index.html",
-              "ToolTip": "D:\\01 - SAVIOS\\GitHub\\ChatBot_Savios\\index.html",
-              "RelativeToolTip": "index.html",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
-              "WhenOpened": "2026-02-25T13:20:51.588Z",
+              "DocumentIndex": 2,
+              "Title": "authConfig.ts",
+              "DocumentMoniker": "D:\\01 - SAVIOS\\GitHub\\ChatBot_Savios\\src\\config\\authConfig.ts",
+              "RelativeDocumentMoniker": "src\\config\\authConfig.ts",
+              "ToolTip": "D:\\01 - SAVIOS\\GitHub\\ChatBot_Savios\\src\\config\\authConfig.ts",
+              "RelativeToolTip": "src\\config\\authConfig.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-02-26T19:53:39.54Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 5,
-              "Title": "Chat.css",
-              "DocumentMoniker": "D:\\01 - SAVIOS\\GitHub\\ChatBot_Savios\\src\\styles\\Chat.css",
-              "RelativeDocumentMoniker": "src\\styles\\Chat.css",
-              "ToolTip": "D:\\01 - SAVIOS\\GitHub\\ChatBot_Savios\\src\\styles\\Chat.css",
-              "RelativeToolTip": "src\\styles\\Chat.css",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAAYAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2026-02-24T20:51:13.397Z",
+              "Title": "Header.tsx",
+              "DocumentMoniker": "D:\\01 - SAVIOS\\GitHub\\ChatBot_Savios\\src\\components\\Header.tsx",
+              "RelativeDocumentMoniker": "src\\components\\Header.tsx",
+              "ToolTip": "D:\\01 - SAVIOS\\GitHub\\ChatBot_Savios\\src\\components\\Header.tsx",
+              "RelativeToolTip": "src\\components\\Header.tsx",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAABOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-02-26T19:56:54.975Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "ChatWindow.tsx",
-              "DocumentMoniker": "D:\\01 - SAVIOS\\GitHub\\ChatBot_Savios\\src\\components\\ChatWindow.tsx",
-              "RelativeDocumentMoniker": "src\\components\\ChatWindow.tsx",
-              "ToolTip": "D:\\01 - SAVIOS\\GitHub\\ChatBot_Savios\\src\\components\\ChatWindow.tsx",
-              "RelativeToolTip": "src\\components\\ChatWindow.tsx",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2026-02-24T20:49:48.131Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 4,
               "Title": "App.tsx",
               "DocumentMoniker": "D:\\01 - SAVIOS\\GitHub\\ChatBot_Savios\\src\\App.tsx",
               "RelativeDocumentMoniker": "src\\App.tsx",
               "ToolTip": "D:\\01 - SAVIOS\\GitHub\\ChatBot_Savios\\src\\App.tsx",
               "RelativeToolTip": "src\\App.tsx",
-              "ViewState": "AgIAABEAAAAAAAAAAAAQwD0AAAATAAAAAAAAAA==",
+              "ViewState": "AgIAACgAAAAAAAAAAAAgwEsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2026-02-24T17:28:44.933Z",
+              "WhenOpened": "2026-02-26T19:55:29.092Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "index.css",
+              "DocumentMoniker": "D:\\01 - SAVIOS\\GitHub\\ChatBot_Savios\\src\\index.css",
+              "RelativeDocumentMoniker": "src\\index.css",
+              "ToolTip": "D:\\01 - SAVIOS\\GitHub\\ChatBot_Savios\\src\\index.css",
+              "RelativeToolTip": "src\\index.css",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-02-26T20:20:30.918Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 7,
-              "Title": "Header.css",
-              "DocumentMoniker": "D:\\01 - SAVIOS\\GitHub\\ChatBot_Savios\\src\\styles\\Header.css",
-              "RelativeDocumentMoniker": "src\\styles\\Header.css",
-              "ToolTip": "D:\\01 - SAVIOS\\GitHub\\ChatBot_Savios\\src\\styles\\Header.css",
-              "RelativeToolTip": "src\\styles\\Header.css",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAAlAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2026-02-24T21:48:42.411Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "App.css",
-              "DocumentMoniker": "D:\\01 - SAVIOS\\GitHub\\ChatBot_Savios\\src\\App.css",
-              "RelativeDocumentMoniker": "src\\App.css",
-              "ToolTip": "D:\\01 - SAVIOS\\GitHub\\ChatBot_Savios\\src\\App.css",
-              "RelativeToolTip": "src\\App.css",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAADIAAAAOAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2026-02-24T17:52:04.253Z"
+              "Title": "main.tsx",
+              "DocumentMoniker": "D:\\01 - SAVIOS\\GitHub\\ChatBot_Savios\\src\\main.tsx",
+              "RelativeDocumentMoniker": "src\\main.tsx",
+              "ToolTip": "D:\\01 - SAVIOS\\GitHub\\ChatBot_Savios\\src\\main.tsx",
+              "RelativeToolTip": "src\\main.tsx",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-02-26T19:54:59.149Z",
+              "EditorCaption": ""
             }
           ]
         }

@@ -1,22 +1,18 @@
 import "../styles/Header.css";
 import saviaLogo from "../assets/images/savia-logo.png";
-
+import { getName, getUniqueName } from "../config/session";
 
 interface HeaderProps {
-    username: string;          // fallback (correo)
-    displayName?: string;      // nombre real
+    username: string;
+    displayName?: string;
     onLogout: () => void;
 }
 
-export default function Header({
-    username,
-    displayName,
-    onLogout,
-}: HeaderProps) {
+export default function Header({ username, displayName, onLogout }: HeaderProps) {
+    const storedName = getName();
+    const storedUnique = getUniqueName();
 
-   // const sessionName = getUsername(); // 👈 lee de localStorage
-
-    const nameToShow = displayName || username;
+    const nameToShow = displayName || storedName || storedUnique || username;
 
     return (
         <header className="header">
@@ -25,6 +21,9 @@ export default function Header({
             <div className="session-info">
                 <span className="session-name">
                     Hola: <strong>{nameToShow}</strong>
+                    {storedUnique && (
+                        <span style={{ fontSize: "12px", opacity: 0.7 }}> ({storedUnique})</span>
+                    )}
                 </span>
                 <button onClick={onLogout}>Cerrar sesión</button>
             </div>
