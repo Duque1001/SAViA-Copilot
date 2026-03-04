@@ -7,11 +7,6 @@ const USERNAME_KEY = "username";
 const ID_TOKEN_KEY = "id_token";
 const NAME_KEY = "name";
 const UNIQUE_NAME_KEY = "unique_name";
-const TOKEN_VALID_KEY = "token_valid";
-
-/* ====== CONFIG ====== */
-const VALIDATION_URL = (import.meta.env.VITE_TOKEN_VALIDATION_URL as string)
-    || "https://3b0a-206-84-81-141.ngrok-free.app/validate_token";
 
 /* ====== HELPERS JWT (decodificar, solo lectura) ====== */
 function decodeJwtPayload(token: string): any | null {
@@ -50,7 +45,6 @@ export const clearSession = () => {
     localStorage.removeItem(ID_TOKEN_KEY);
     localStorage.removeItem(NAME_KEY);
     localStorage.removeItem(UNIQUE_NAME_KEY);
-    localStorage.removeItem(TOKEN_VALID_KEY);
 };
 
 export const getAccessToken = (): string | null => localStorage.getItem(ACCESS_TOKEN_KEY);
@@ -61,12 +55,6 @@ export const getIdToken = (): string | null => localStorage.getItem(ID_TOKEN_KEY
 
 export const setIdToken = (idToken: string) => {
     localStorage.setItem(ID_TOKEN_KEY, idToken || "");
-};
-export const setTokenValidated = (ok: boolean) => {
-    localStorage.setItem(TOKEN_VALID_KEY, ok ? "true" : "false");
-};
-export const isTokenValidated = (): boolean => {
-    return localStorage.getItem(TOKEN_VALID_KEY) === "true";
 };
 
 /* ====== UTILIDADES DE CUENTA ====== */
@@ -79,65 +67,50 @@ const getUserFromAccount = (account: AccountInfo): string => {
     return getUserFromEmail(email);
 };
 
-/* ====== Validación externa del ID TOKEN ====== */
-/** Clasifica la respuesta
- *  - {ok:true, denied:false}  => validación OK
- *  - {ok:false, denied:true}  => validación negativa explícita (status ≠ OK)
- *  - {ok:false, transient:true} => error transitorio (red/CORS/timeouts...)
- */
-export async function validateIdTokenExternal(idToken: string): Promise<{ ok: boolean; denied?: boolean; transient?: boolean; name?: string }> {
+/* ====== ID TOKEN: obtenerlo y guardarlo (para usos posteriores) ====== */
+export const acquireIdToken = async (
+    instance: IPublicClientApplication,
+    account: AccountInfo
+): Promise<string | null> => {
     try {
-        const res = await fetch(VALIDATION_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ token: idToken }),
+        const res = await instance.acquireTokenSilent({
+            account,
+            scopes: ["openid", "profile", "email"],
         });
-
-        if (!res.ok) {
-            // Error HTTP ≠ rechazo explícito; lo tratamos como transitorio
-            return { ok: false, transient: true };
-        }
-
-        const data = await res.json();
-        const ok = data?.is_valid?.status === "OK";
-        const name = data?.is_valid?.name as string | undefined;
-
-        if (ok) {
-            setTokenValidated(true);
-            if (name) {
-                try { localStorage.setItem(NAME_KEY, name); } catch { }
-            }
-            return { ok: true, denied: false, name };
-        } else {
-            setTokenValidated(false);
-            return { ok: false, denied: true };
-        }
-    } catch (e) {
-        console.warn("[validateIdTokenExternal] Error transitorio:", e);
-        return { ok: false, transient: true };
+        const idTok = res.idToken || "";
+        setIdToken(idTok);
+        // Opcional: puedes poblar NAME/UNIQUE_NAME desde el idToken
+        const claims = decodeJwtPayload(idTok);
+        const name =
+            claims?.name ??
+            claims?.preferred_username ??
+            "";
+        const uniqueName =
+            claims?.unique_name ??
+            claims?.preferred_username ??
+            claims?.upn ??
+            "";
+        try {
+            if (name) localStorage.setItem(NAME_KEY, name);
+            if (uniqueName) localStorage.setItem(UNIQUE_NAME_KEY, uniqueName);
+        } catch { }
+        return idTok || null;
+    } catch {
+        // En caso de que no esté en caché, podrías forzar una interacción:
+        // const res = await instance.acquireTokenPopup({ account, scopes: ["openid","profile","email"] });
+        // setIdToken(res.idToken || "");
+        return null;
     }
-}
-
-/** Reintento con backoff exponencial: 0ms, 600ms, 1200ms (por defecto) */
-export async function validateIdTokenWithRetry(idToken: string, maxAttempts = 3) {
-    const delays = [0, 600, 1200];
-    for (let i = 0; i < Math.min(maxAttempts, delays.length); i++) {
-        if (delays[i]) await new Promise(r => setTimeout(r, delays[i]));
-        const r = await validateIdTokenExternal(idToken);
-        if (r.ok) return { ok: true, denied: false };
-        if (r.denied) return { ok: false, denied: true };   // rechazo explícito → no insistir
-        // si fue transitorio: continúa el loop
-    }
-    return { ok: false, denied: false }; // agotó intentos (transitorio persistente)
-}
+};
 
 /* ====== ACCESS TOKEN: obtenerlo y poblar name / unique_name desde sus claims ====== */
 export const acquireAccessToken = async (
     instance: IPublicClientApplication,
     account: AccountInfo
 ): Promise<string | null> => {
-
-    const scopes = (import.meta.env.VITE_LOGIN_SCOPES || "").split(" ").filter(Boolean);
+    const scopes = (import.meta.env?.VITE_LOGIN_SCOPES || "")
+        .split(" ")
+        .filter(Boolean);
     const username = getUserFromAccount(account);
 
     if (scopes.length === 0) {
@@ -179,6 +152,52 @@ export const acquireAccessToken = async (
         }
         console.error("[acquireAccessToken] Error:", err);
         saveSession("", username);
+        return null;
+    }
+};
+
+
+/* ====== VALIDACIÓN DE TOKEN CON API EXTERNA ====== */
+
+export interface TokenValidationResponse {
+    id: string;
+    nombre: string;
+    email: string | null;
+}
+
+export const validateToken = async (idToken: string): Promise<TokenValidationResponse | null> => {
+    const validationUrl = import.meta.env.VITE_TOKEN_VALIDATION_URL;
+
+
+    if (!validationUrl || !idToken) {
+        console.error("[validateToken] URL o token faltante");
+        return null;
+    }
+
+    try {
+        const response = await fetch(validationUrl, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Ino2LWZMdjIyM1BXNG42UjNneHZkdlhpZ1pYayJ9.eyJhdWQiOiI3MDE1OTYyMi0zY2IzLTQ3NTAtYjZhNy0xMzkzNjEyOWJjNDEiLCJpc3MiOiJodHRwczovLzRiMjc1YzI4LTU1MTMtNDk3YS04YzUwLTZjYjAzNDc3ZjVkZi5jaWFtbG9naW4uY29tLzRiMjc1YzI4LTU1MTMtNDk3YS04YzUwLTZjYjAzNDc3ZjVkZi92Mi4wIiwiaWF0IjoxNzcyMTQzMzk2LCJuYmYiOjE3NzIxNDMzOTYsImV4cCI6MTc3MjE0NzI5NiwiYWlvIjoiQVlRQWUvOGJBQUFBK3Ara0NBdWtEcDhNZE83b3NYSFFremQ5M1BuVHgyZ1psV3FyRFFBR1pYWTBSN2dPbEZQRTcrZHRHN3FiVzFyYkhUVjJwVnFOY1R3NDQ5WVJnOVRkVWcveVl2T3ExY1pBeWI3NSttWitDdnBjSUFLWVc3M0FGUDB5bzcvaTA1VFAxeEx0V1dMeTJPeTBTSjd1Y3dhcm5seUJ4WVhldHlDQnZKZHlmSzd5aWd3PSIsIm5hbWUiOiJBbmRlcnNzb24gSGVuYW8gT2NhbXBvIiwib2lkIjoiNDY5YmJiMTctYmEwYy00ODk0LWI4OTEtZDhhZjY0ZjhkNWEwIiwicmgiOiIxLkFiZ0FLRnduU3hOVmVrbU1VR3l3TkhmMTN5S1dGWEN6UEZCSHRxY1RrMkVwdkVFQUFNYTRBQS4iLCJzaWQiOiIwMDIyODQwYS1mNjExLWNjZTMtZTcwOS1hN2ZmMjA4YTYxYTMiLCJzdWIiOiJMUUFFQkQ2ckVTaHUwWTB4dkdYX000WXBRdV9QUHp4UTBiX0tOQ3dQdnl3IiwidGlkIjoiNGIyNzVjMjgtNTUxMy00OTdhLThjNTAtNmNiMDM0NzdmNWRmIiwidXRpIjoiaGdFZlk5cXFqay1ONlhhai1VVUFBQSIsInZlciI6IjIuMCJ9.fopJgc4rE4tNknOWMzRoDOVXnLTodR1Y7nrMrqQnPifnDbYIYIkk8IgSIHZtFQTOgEg5X2eJraqfGsaOmQm8OMxPN_FTpULfF6yh2Zjin-5VkKhNBJS6woLrTZM0rIqAtDqZkgID05YG_fWOgtnQJRx5ekBQ76GVVT7DqayDtmJ8-Zdmgjktsko9Tm_I5kn8I9FKliAVrUIFZ_yCWm421ZrzyUyfPQvIUbNb7s7DkYWDjZf_2GDo4pcONh-05xiAje2UMpEkfe3JSZVd3PlAzvjNLZSACQUfm58ojveLfaMmDVkEKtMPGAkCt2T3YsR2gc8RJ7gyWw-jEokBdNJHIw`,
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            console.warn(`[validateToken] HTTP ${response.status}`);
+            return null;
+        }
+
+        const data: TokenValidationResponse = await response.json();
+
+        if (!data?.id || !data?.nombre) {
+            console.warn("[validateToken] Respuesta sin campos esperados:", data);
+            return null;
+        }
+
+        return data;
+    } catch (error) {
+        console.error("[validateToken] Error:", error);
         return null;
     }
 };
