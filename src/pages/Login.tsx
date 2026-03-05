@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { useMsal } from "@azure/msal-react";
 import { loginRequest } from "../config/authConfig";
 import {
@@ -6,11 +6,13 @@ import {
     acquireAccessToken,
     clearSession,
     saveSession,
-    validateToken,
+    validateTokenDetailed,
 } from "../config/session";
 import "../styles/Login.css";
 import saviaLogo from "../assets/images/savia-logo_.png";
 import { useTranslation } from "react-i18next";
+
+const AUTO_LOGOUT_MS = 3500; // tiempo para mostrar el mensaje antes de cerrar sesión (0 = deshabilitar)
 
 export default function Login() {
     const { t, i18n } = useTranslation(["login"]);
@@ -23,6 +25,13 @@ export default function Login() {
 
     const [errorMsg, setErrorMsg] = useState<string>("");
     const [validating, setValidating] = useState<boolean>(false);
+    const logoutTimer = useRef<number | null>(null);
+
+    useEffect(() => {
+        return () => {
+            if (logoutTimer.current) window.clearTimeout(logoutTimer.current);
+        };
+    }, []);
 
     const currentLang = useMemo(() => {
         const lng = i18n.resolvedLanguage || i18n.language || "es";
@@ -49,31 +58,34 @@ export default function Login() {
             saveSession("", username);
             setIdToken(idToken);
 
-            // 3) Obtener access token (opcional)
+            // 3) (Opcional) Access token
             if (res.account) {
                 await acquireAccessToken(instance, res.account).catch(console.error);
             }
 
-            // 4) Validar token con API externa
+            // 4) Validación externa (NO cierra aquí; devuelve {ok, reason})
             setValidating(true);
-            const tokenData = await validateToken(idToken);
+            const result = await validateTokenDetailed(idToken);
             setValidating(false);
 
-            if (!tokenData) {
-                // ⚠️ NO llamamos logoutPopup() — solo limpiamos sesión local
-                // Esto evita que MSAL cierre la sesión y cause el loop
-                clearSession();
-                setErrorMsg(t("alertUnexpected"));
+            if (!result.ok) {
+                // Mostrar mensaje y (opcional) auto‑logout después de un tiempo
+                setErrorMsg(result.reason || t("alertUnexpected"));
+
+                if (AUTO_LOGOUT_MS > 0) {
+                    logoutTimer.current = window.setTimeout(async () => {
+                        try { clearSession(); } catch { }
+                        try { await instance.logoutPopup(); } catch { }
+                    }, AUTO_LOGOUT_MS);
+                }
                 return;
             }
 
             // 5) Token válido → entrar a la app
             window.location.replace("/");
-
         } catch (error: any) {
             setValidating(false);
 
-            // Ignorar cancelación del popup (usuario cerró la ventana)
             if (error?.errorCode === "user_cancelled" || error?.errorCode === "popup_window_error") {
                 return;
             }
@@ -83,13 +95,13 @@ export default function Login() {
         }
     };
 
-    const handleLogout = async () => {
-        try {
-            clearSession();
-            await instance.logoutPopup();
-        } catch (e) {
-            console.warn("Error cerrando sesión:", e);
+    const handleLogoutNow = async () => {
+        if (logoutTimer.current) {
+            window.clearTimeout(logoutTimer.current);
+            logoutTimer.current = null;
         }
+        try { clearSession(); } catch { }
+        try { await instance.logoutPopup(); } catch { }
     };
 
     return (
@@ -104,17 +116,19 @@ export default function Login() {
                             <p>{t("validating") || "Validando sesión..."}</p>
                         </div>
                     ) : errorMsg ? (
-                        <div className="login-alert login-alert--warn" role="alert" aria-live="polite">
+                        <div className="login-alert login-alert--error" role="alert" aria-live="polite">
                             <strong>{t("alertTransientTitle")}</strong>
                             <div style={{ marginTop: 6 }}>{errorMsg}</div>
-                            <div className="login-alert__actions">
-                                <button className="btn-retry" onClick={handleLogin}>
-                                    {t("retry")}
-                                </button>
-                                <button className="btn-logout" onClick={handleLogout}>
-                                    {t("logout")}
+                            <div className="login-alert__actions" style={{ marginTop: 10 }}>
+                                <button className="btn-logout" onClick={handleLogoutNow}>
+                                    {t("logout") || "Cerrar sesión"}
                                 </button>
                             </div>
+                            {AUTO_LOGOUT_MS > 0 && (
+                                <div style={{ marginTop: 8, fontSize: 12, opacity: .8 }}>
+                                    Se cerrará la sesión automáticamente en {Math.round(AUTO_LOGOUT_MS / 1000)}s…
+                                </div>
+                            )}
                         </div>
                     ) : (
                         <button className="btn-login" onClick={handleLogin}>

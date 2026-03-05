@@ -6,6 +6,7 @@ import {
     acquireIdToken,
     getName,
     getUniqueName,
+    getIdToken,
 } from "./config/session";
 
 import ChatWindow from "./components/ChatWindow";
@@ -22,7 +23,7 @@ const RAW_API_URL = import.meta.env.VITE_CHAT_API_URL;
 if (!RAW_API_URL) throw new Error("VITE_CHAT_API_URL no está definida");
 const API_URL = RAW_API_URL.replace(/\/$/, "");
 
-//  TIPOS
+// TIPOS
 interface Message {
     from: "user" | "bot";
     text: string;
@@ -46,13 +47,10 @@ function App() {
     const [input, setInput] = useState("");
     const [loading, setLoading] = useState(false);
 
-    // Al autenticarse, obtenemos idToken (y opcionalmente accessToken)
     useEffect(() => {
         const primeAuthArtifacts = async () => {
             if (!isAuthenticated || accounts.length === 0) return;
-            // Guardar idToken para usos posteriores (no bloquea la UI)
             await acquireIdToken(instance, accounts[0]).catch(console.error);
-            // Access token (opcional, si tienes VITE_LOGIN_SCOPES)
             await acquireAccessToken(instance, accounts[0]).catch(console.error);
         };
         primeAuthArtifacts().catch(console.error);
@@ -70,6 +68,7 @@ function App() {
 
             const storedName = getName();
             const storedUnique = getUniqueName();
+            const idToken = getIdToken();
 
             const payload = {
                 session_id: storedUnique || storedName || userId,
@@ -79,7 +78,10 @@ function App() {
 
             const response = await fetch(API_URL, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${idToken}`
+                },
                 body: JSON.stringify(payload),
             });
 
