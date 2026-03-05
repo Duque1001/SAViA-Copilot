@@ -204,7 +204,7 @@ export const validateTokenDetailed = async (idToken: string): Promise<TokenValid
 
     const contentType = response.headers.get("content-type") || "";
     if (!response.ok) {
-      const body = await response.text().catch(() => "");
+      //const body = await response.text().catch(() => "");
       return {
         ok: false,
         reason: `No fue posible validar tu sesión (HTTP ${response.status}).`,
