@@ -4,10 +4,10 @@
 
 /* Capa de página: forzamos fullscreen y centrado absoluto */
 .login-fullscreen {
-    position: fixed; /* 🔑 ocupa toda la ventana, independiente del layout */
+    position: fixed; /* ocupa toda la ventana, independiente del layout */
     inset: 0; /* top/right/bottom/left = 0 */
-    display: grid; /* 🔑 centrado preciso */
-    place-items: center; /* 🔑 centrado vertical y horizontal */
+    display: grid; /* centrado preciso */
+    place-items: center; /* centrado vertical y horizontal */
     padding: 24px;
     box-sizing: border-box;
     background: var(--clr-bg, #ffffff); /* usa tu bg global si existe */

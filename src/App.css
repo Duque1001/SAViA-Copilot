@@ -63,7 +63,7 @@
     --page-pad: 16px;
 }
 
-/* ✅ ancho completo del sitio */
+/* ancho completo del sitio */
 html, body, #root {
     height: 100%;
     background: var(--clr-bg);
@@ -108,7 +108,8 @@ html, body, #root {
     border-radius: 12px;
     padding: 8px;
     overflow: hidden;
-    width: 45%;
+    /* width: 45%; */
+    width: 90%;
     height: 90%
 }
 

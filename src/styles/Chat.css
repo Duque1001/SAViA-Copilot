@@ -2,7 +2,8 @@
 .input-container {
     display: flex;
     gap: 10px;
-    width: 50%
+    /* width: 50% */
+    width: 90%;
 }
 
     .input-container input {
@@ -28,10 +29,10 @@
     display: flex !important;
     flex-direction: column !important;
     align-items: stretch;
-    /* 🔑 Que ocupe todo el ancho disponible */
+    /* Que ocupe todo el ancho disponible */
     width: 100%;
-    flex: 1 1 auto; /* 🔑 Permite crecer dentro de su padre flex */
-    box-sizing: border-box; /* 🔑 Incluye padding/borde en el cálculo del ancho */
+    flex: 1 1 auto; /* Permite crecer dentro de su padre flex */
+    box-sizing: border-box; /* Incluye padding/borde en el cálculo del ancho */
 
     padding: 16px;
     background-color: #fff !important;
@@ -62,7 +63,7 @@
     line-height: 1.4;
 }
 
-    /* 🤖 BOT (IZQUIERDA) */
+    /* BOT (IZQUIERDA) */
     .message.bot {
         align-self: flex-start !important;
         background-color: #f2f2f2;
@@ -70,7 +71,7 @@
         border-top-left-radius: 4px;
     }
 
-    /* 👤 USUARIO (DERECHA) */
+    /* USUARIO (DERECHA) */
     .message.user {
         align-self: flex-end !important;
         background-color: #5B2B81;
