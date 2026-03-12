@@ -1,8 +1,8 @@
 // Importa los estilos del chat
 import "../styles/Chat.css";
 
-// Componente que muestra animación de escritura
-import TypingMessage from "./TypingMessage";
+// Hooks de React usados en el componente
+import { useCallback, useEffect, useRef, useState } from "react";
 
 // Componente para renderizar Markdown
 import ReactMarkdown from "react-markdown";
@@ -13,11 +13,12 @@ import remarkGfm from "remark-gfm";
 // Plugin para respetar saltos de línea
 import remarkBreaks from "remark-breaks";
 
-// Hooks de React usados en el componente
-import { useCallback, useEffect, useMemo, useRef } from "react";
+// Componente que muestra el efecto de escritura
+import TypingMessage from "./TypingMessage";
 
 // Estructura de cada mensaje
 interface Message {
+  id: string; // Identificador único del mensaje
   from: "user" | "bot"; // Indica quién envía el mensaje
   text: string; // Contenido del mensaje
   isThinking?: boolean; // Marca si el bot está "pensando"
@@ -36,6 +37,9 @@ export default function ChatWindow({ messages }: ChatWindowProps) {
   // Guarda si el auto-scroll está activo
   const autoScrollEnabledRef = useRef(true);
 
+  // Guarda los mensajes que ya terminaron de animarse
+  const [completedTypingIds, setCompletedTypingIds] = useState<Set<string>>(new Set());
+
   // Lleva el scroll al final del chat
   const scrollToBottom = useCallback((force = false) => {
     requestAnimationFrame(() => {
@@ -53,7 +57,7 @@ export default function ChatWindow({ messages }: ChatWindowProps) {
   // Detecta si el usuario está cerca del final del chat
   const handleScroll = useCallback(() => {
     const el = chatRef.current;
-    if (!el) return;
+    if (!el) return; // Sale si no existe el contenedor
 
     const threshold = 80; // Margen para considerar "cerca del final"
     const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
@@ -61,14 +65,6 @@ export default function ChatWindow({ messages }: ChatWindowProps) {
     // Activa auto-scroll solo si está cerca del final
     autoScrollEnabledRef.current = distanceFromBottom <= threshold;
   }, []);
-
-  // Obtiene el índice del último mensaje del bot
-  const lastBotMessageIndex = useMemo(() => {
-    return [...messages]
-      .map((msg, index) => ({ ...msg, index })) // Agrega el índice a cada mensaje
-      .filter((msg) => msg.from === "bot") // Deja solo mensajes del bot
-      .pop()?.index; // Toma el último índice del bot
-  }, [messages]);
 
   // Hace scroll al final cuando cambian los mensajes
   useEffect(() => {
@@ -83,37 +79,50 @@ export default function ChatWindow({ messages }: ChatWindowProps) {
   return (
     // Contenedor principal del chat con scroll
     <div className="chat-container" ref={chatRef} onScroll={handleScroll}>
-      {messages.map((msg, i) => {
-        // Verifica si este es el último mensaje del bot
-        const isLastBotMessage = msg.from === "bot" && i === lastBotMessageIndex;
+      {messages.map((msg) => {
+        // Define si este mensaje debe animarse
+        const shouldAnimate =
+          msg.from === "bot" &&
+          !msg.isThinking &&
+          !completedTypingIds.has(msg.id);
 
         return (
           <div
-            key={i} // Clave del elemento renderizado
-            className={`message ${msg.from} ${msg.isThinking ? "thinking" : ""}`} // Clases dinámicas
+            key={msg.id} // Clave única para React
+            className={`message ${msg.from} ${msg.isThinking ? "thinking" : ""}`}
           >
             {msg.from === "bot" ? (
               msg.isThinking ? (
-                // Mensaje temporal mientras el bot piensa
+                // Muestra mensaje temporal mientras el bot responde
                 <div className="message-content typing-content">{msg.text}</div>
-              ) : isLastBotMessage ? (
-                // Último mensaje del bot con efecto de escritura
+              ) : shouldAnimate ? (
+                // Muestra animación de escritura para respuestas nuevas
                 <TypingMessage
-                  key={`typing-${i}-${msg.text.length}`}
-                  text={msg.text}
-                  speed={18} // Velocidad del tipeo
-                  onTypingProgress={() => scrollToBottom()} // Mantiene scroll durante la animación
+                  key={`typing-${msg.id}`} // Clave única del mensaje animado
+                  text={msg.text} // Texto que se animará
+                  speed={18} // Velocidad de escritura
+                  onTypingProgress={scrollToBottom} // Hace scroll mientras escribe
+                  onComplete={() => {
+                    // Marca el mensaje como completado
+                    setCompletedTypingIds((prev) => {
+                      if (prev.has(msg.id)) return prev; // Evita duplicados
+
+                      const next = new Set(prev); // Copia el set actual
+                      next.add(msg.id); // Agrega el id completado
+                      return next; // Retorna el nuevo set
+                    });
+                  }}
                 />
               ) : (
-                // Mensajes anteriores del bot renderizados como Markdown
+                // Renderiza el mensaje del bot como Markdown normal
                 <div className="message-content markdown-content">
                   <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>
-                    {String(msg.text || "").replace(/\\n/g, "\n")} 
+                    {String(msg.text || "").replace(/\\n/g, "\n")}
                   </ReactMarkdown>
                 </div>
               )
             ) : (
-              // Mensaje enviado por el usuario
+              // Renderiza el mensaje del usuario
               <div className="message-content user-content">{msg.text}</div>
             )}
           </div>

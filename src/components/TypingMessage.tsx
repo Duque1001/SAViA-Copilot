@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 // Componente para renderizar Markdown
 import ReactMarkdown from "react-markdown";
 
-// Plugin para soportar tablas, listas, en Markdown
+// Plugin para tablas, listas y más sintaxis Markdown
 import remarkGfm from "remark-gfm";
 
 // Plugin para respetar saltos de línea
@@ -12,9 +12,10 @@ import remarkBreaks from "remark-breaks";
 
 // Props del componente TypingMessage
 interface TypingMessageProps {
-  text: string; // Texto completo que el bot debe escribir
-  speed?: number; // Velocidad base de escritura
-  onTypingProgress?: () => void; // Callback durante la animación
+  text: string; // Texto que debe mostrarse
+  speed?: number; // Velocidad de escritura
+  onTypingProgress?: () => void; // Callback durante la escritura
+  onComplete?: () => void; // Callback cuando termina la animación
 }
 
 // Componente que simula el efecto de escritura del bot
@@ -22,6 +23,7 @@ export default function TypingMessage({
   text,
   speed = 18,
   onTypingProgress,
+  onComplete,
 }: TypingMessageProps) {
 
   // Normaliza el texto reemplazando "\n" por saltos reales
@@ -37,24 +39,23 @@ export default function TypingMessage({
 
   // Efecto que ejecuta la animación de tipeo
   useEffect(() => {
-    let index = 0;
+    let index = 0; // Posición actual del texto
 
-    // Función que agrega un carácter en cada iteración
     const typeNext = () => {
       index += 1;
 
-      // Obtiene el texto parcial que se mostrará
+      // Obtiene el texto que se mostrará hasta el índice actual
       const nextText = normalizedText.slice(0, index);
-
       setDisplayedText(nextText);
 
-      // Ejecuta callback si existe (scroll automático)
+      // Notifica progreso de escritura
       onTypingProgress?.();
 
+      // Si aún faltan caracteres, continúa la animación
       if (index < normalizedText.length) {
         const currentChar = normalizedText[index - 1];
 
-        // Ajusta la velocidad según el carácter
+        // Ajusta velocidad según el tipo de carácter
         let delay = speed;
         if (currentChar === " ") delay = 8;
         if ([",", ".", ":", ";"].includes(currentChar)) delay = 50;
@@ -62,36 +63,41 @@ export default function TypingMessage({
 
         // Programa el siguiente carácter
         timeoutRef.current = window.setTimeout(typeNext, delay);
+      } else {
+        // Notifica cuando termina la animación
+        onComplete?.();
       }
     };
 
     // Inicia la animación si hay texto
     if (normalizedText.length > 0) {
       timeoutRef.current = window.setTimeout(typeNext, speed);
+    } else {
+      onComplete?.();
     }
 
     // Limpia el timeout al desmontar el componente
     return () => {
-      if (timeoutRef.current) {
+      if (timeoutRef.current !== null) {
         window.clearTimeout(timeoutRef.current);
       }
     };
-  }, [normalizedText, speed, onTypingProgress]);
+  }, [normalizedText, speed]);
 
   // Verifica si el texto ya terminó de escribirse
   const isFinished = displayedText.length >= normalizedText.length;
 
-  // Mientras escribe: muestra texto parcial + cursor
+  // Mientras escribe, muestra el texto parcial con cursor
   if (!isFinished) {
     return (
       <div className="message-content typing-content">
         <span style={{ whiteSpace: "pre-wrap" }}>{displayedText}</span>
-        <span className="typing-cursor">▍</span> {/* Cursor de escritura */}
+        <span className="typing-cursor">▍</span>
       </div>
     );
   }
 
-  // Cuando termina: renderiza el texto completo en Markdown
+  // Cuando termina, renderiza el texto completo como Markdown
   return (
     <div className="message-content markdown-content">
       <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>

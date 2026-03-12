@@ -1,6 +1,8 @@
 // Importa los estilos del menú lateral
 import "../styles/SideNav.css";
 
+import saviaLogo from "../assets/images/savia-logo.png";
+
 // Hook para manejar traducciones
 import { useTranslation } from "react-i18next";
 
@@ -59,6 +61,10 @@ export default function SideNav({ activeKey, isOpen, onSelect, onClose }: SideNa
 
         {/* Sección inferior con enlaces o redes sociales */}
         <div className="sidenav__footer">
+          <div className="sidenav__brand">
+            <img src={saviaLogo} alt="SAV-IA" className="sidenav__brand-logo" />
+          </div>
+          
           <SocialLinks />
         </div>
 

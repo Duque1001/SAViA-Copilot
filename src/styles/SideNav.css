@@ -30,6 +30,25 @@
     background: transparent;
 }
 
+.sidenav__footer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0px;
+    margin-top: auto;
+}
+
+.sidenav__brand {
+    display: block;
+    margin-bottom: 0;
+}
+
+.sidenav__brand-logo {
+    width: 180px;
+    height: auto;
+    display: block;
+}
+
 /* Contenedor de navegación */
 .sidenav__nav {
     display: flex;

@@ -2,13 +2,16 @@
 import "../styles/Header.css";
 
 // Importa el logo de la aplicación
-import saviaLogo from "../assets/images/savia-logo_.png";
+//import saviaLogo from "../assets/images/savia-logo_.png";
+
+import logoSavios from "../assets/images/logo-savios.png";
 
 // Funciones para obtener datos del usuario guardados en sesión
 import { getName, getUniqueName } from "../config/session";
 
 // Hook para manejar traducciones
 import { useTranslation } from "react-i18next";
+
 
 // Props que recibe el componente Header
 interface HeaderProps {
@@ -50,7 +53,8 @@ export default function Header({ username, displayName, onLogout, onToggleMenu }
         </button>
 
         {/* Logo de la aplicación */}
-        <img src={saviaLogo} alt="SAV-IA" className="logo" />
+        {/* <img src={saviaLogo} alt="SAV-IA" className="logo" /> */}
+        <img src={logoSavios} alt="SAVIOS" className="logo" />
 
       </div>
 
