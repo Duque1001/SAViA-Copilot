@@ -21,7 +21,7 @@ interface TypingMessageProps {
 // Componente que simula el efecto de escritura del bot
 export default function TypingMessage({
   text,
-  speed = 18,
+  speed = 5,
   onTypingProgress,
   onComplete,
 }: TypingMessageProps) {
@@ -57,9 +57,9 @@ export default function TypingMessage({
 
         // Ajusta velocidad según el tipo de carácter
         let delay = speed;
-        if (currentChar === " ") delay = 8;
-        if ([",", ".", ":", ";"].includes(currentChar)) delay = 50;
-        if (currentChar === "\n") delay = 35;
+        if (currentChar === " ") delay = 3;
+        if ([",", ".", ":", ";"].includes(currentChar)) delay = 10;
+        if (currentChar === "\n") delay = 8;
 
         // Programa el siguiente carácter
         timeoutRef.current = window.setTimeout(typeNext, delay);

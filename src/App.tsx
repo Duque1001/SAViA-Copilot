@@ -1,201 +1,191 @@
-// Hooks de React para manejar estado, referencias y efectos
+// Hooks de React para estado, efectos y referencias persistentes
 import { useEffect, useRef, useState } from "react";
 
-// Hooks de MSAL para manejar autenticación con Azure
+// Hooks de MSAL para saber si hay sesión y acceder a la instancia/auth
 import { useIsAuthenticated, useMsal } from "@azure/msal-react";
 
-// Funciones de sesión para obtener datos del usuario y tokens
+// Funciones de sesión: obtener tokens, datos del usuario y cerrar sesión
 import {
-  clearSession,
   acquireAccessToken,
   acquireIdToken,
+  acquireValidIdToken,
   getName,
   getUniqueName,
-  getIdToken,
+  logoutAndGoHome,
 } from "./config/session";
 
-// Componentes principales de la aplicación
+// Componentes principales de la interfaz
 import ChatWindow from "./components/ChatWindow";
 import ChatInput from "./components/ChatInput";
 import Header from "./components/Header";
 import SideNav from "./components/SideNav";
 import Login from "./pages/Login";
 
-// Estilos globales de la aplicación
+// Estilos y traducciones
 import "./App.css";
-
-// Hook para manejo de traducciones
 import { useTranslation } from "react-i18next";
 
-// Obtiene la URL de la API desde las variables de entorno
+// Lee la URL del backend desde variables de entorno
 const RAW_API_URL = import.meta.env.VITE_CHAT_API_URL;
 
-// Verifica que la URL esté definida
+// Valida que la URL exista
 if (!RAW_API_URL) throw new Error("VITE_CHAT_API_URL no está definida");
 
-// Elimina la "/" final si existe
+// Quita la "/" final para evitar errores al construir requests
 const API_URL = RAW_API_URL.replace(/\/$/, "");
 
 // Estructura de cada mensaje del chat
 interface Message {
-  id: string; // Identificador único del mensaje
-  from: "user" | "bot"; // Indica quién envía el mensaje
-  text: string; // Contenido del mensaje
-  isThinking?: boolean; // Marca si el bot está generando respuesta
+  id: string;
+  from: "user" | "bot";
+  text: string;
+  isThinking?: boolean;
 }
 
-// Vistas disponibles en el menú lateral
+// Vistas permitidas en la aplicación
 type ViewKey = "chat" | "config";
 
-// Componente principal de la aplicación
 function App() {
-
-  // Hook para traducciones
+  // Traducciones del módulo chat
   const { t } = useTranslation(["chat"]);
 
-  // Estado de autenticación del usuario
+  // Estado global de autenticación y datos de MSAL
   const isAuthenticated = useIsAuthenticated();
-
-  // Instancia de MSAL y cuentas autenticadas
   const { instance, accounts } = useMsal();
 
-  // Obtiene el correo del usuario autenticado
+  // Obtiene email y un id amigable del usuario
   const email = accounts.length > 0 ? accounts[0].username : "";
-
-  // Extrae el identificador del usuario desde el correo
   const userId = email.includes("@") ? email.split("@")[0] : email || "Usuario";
 
-  // Vista activa del menú lateral
+  // Estados de la interfaz
   const [activeView, setActiveView] = useState<ViewKey>("chat");
-
-  // Estado que controla si el menú lateral está abierto
   const [isSideOpen, setSideOpen] = useState<boolean>(false);
-
-  // Lista de mensajes del chat
   const [messages, setMessages] = useState<Message[]>([]);
-
-  // Texto del input del usuario
   const [input, setInput] = useState("");
-
-  // Estado de carga mientras se consulta la API
   const [loading, setLoading] = useState(false);
 
-  // Referencia para generar IDs únicos de mensajes
+  // Referencia para generar ids únicos de mensajes
   const messageIdRef = useRef(0);
 
-  // Genera un nuevo ID de mensaje
+  // Genera ids incrementales para cada mensaje
   const createMessageId = () => {
     messageIdRef.current += 1;
     return `msg-${messageIdRef.current}`;
   };
 
-  // Inicializa los tokens de autenticación al iniciar sesión
+  // Al iniciar con sesión activa, prepara tokens y datos de autenticación
   useEffect(() => {
     const primeAuthArtifacts = async () => {
-
-      // Sale si el usuario no está autenticado
       if (!isAuthenticated || accounts.length === 0) return;
 
-      // Obtiene el idToken
       await acquireIdToken(instance, accounts[0]).catch(console.error);
-
-      // Obtiene el accessToken
       await acquireAccessToken(instance, accounts[0]).catch(console.error);
     };
 
     primeAuthArtifacts().catch(console.error);
-
   }, [isAuthenticated, accounts, instance]);
 
-  // Cierra sesión del usuario
-  const handleLogout = () => {
-    clearSession();
-    instance.logoutPopup().catch(console.error);
+  // Cierra sesión y redirige al inicio
+  const handleLogout = async () => {
+    await logoutAndGoHome(instance);
   };
 
-  // Envía un mensaje a la API del chatbot
+  // Envía el mensaje al backend usando un token fresco
   const sendMessageToApi = async (text: string) => {
     try {
-
       // Activa estado de carga
       setLoading(true);
 
-      // Obtiene datos de sesión almacenados
+      // Recupera datos del usuario guardados en sesión
       const storedName = getName();
       const storedUnique = getUniqueName();
-      const idToken = getIdToken();
 
-      // Construye el payload enviado al backend
+      // Toma la cuenta autenticada actual
+      const account = accounts[0];
+
+      // Si no hay cuenta, cierra sesión
+      if (!account) {
+        await logoutAndGoHome(instance);
+        return t("connectError");
+      }
+
+      // Pide un token nuevo/silencioso en cada consulta. Evita reutilizar un token vencido.
+      const freshIdToken = await acquireValidIdToken(instance, account);
+
+      // Si no pudo obtener token válido, cierra sesión
+      if (!freshIdToken) {
+        await logoutAndGoHome(instance);
+        return t("connectError");
+      }
+
+      // Cuerpo de la petición al backend
       const payload = {
         session_id: storedUnique || storedName || userId,
         request_id: "1",
         text,
       };
 
-      // Llamada POST a la API del chatbot
+      // Llamado a la API del chat
       const response = await fetch(API_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${idToken}`,
+          Authorization: `Bearer ${freshIdToken}`,
         },
         body: JSON.stringify(payload),
       });
 
-      // Lanza error si la respuesta no es correcta
-      if (!response.ok) throw new Error("Error HTTP");
+      // Si backend rechaza el token, cierra sesión
+      if (response.status === 401 || response.status === 403) {
+        await logoutAndGoHome(instance);
+        return t("connectError");
+      }
 
-      // Convierte la respuesta a JSON
+      // Si hubo otro error HTTP, lanza excepción
+      if (!response.ok) {
+        throw new Error(`Error HTTP ${response.status}`);
+      }
+
+      // Lee y retorna la respuesta del bot
       const data = await response.json();
-
-      // Retorna la respuesta del bot
       return data.response;
-
     } catch (error) {
-
       console.error("Error en fetch:", error);
 
-      // Devuelve mensaje de error traducido
+      // Ante error inesperado, cierra sesión para evitar que el chat quede usando una sesión inválida.
+      await logoutAndGoHome(instance);
       return t("connectError");
-
     } finally {
-
-      // Desactiva estado de carga
+      // Siempre apaga el estado de carga
       setLoading(false);
     }
   };
 
-  // Maneja el envío de mensajes del usuario
+  // Maneja el envío del mensaje desde la UI
   const handleSend = async () => {
-
-    // Evita enviar si está vacío o cargando
+    // Evita enviar vacío o mientras carga
     if (!input.trim() || loading) return;
 
-    // Guarda el mensaje del usuario
     const userMessage = input.trim();
-
-    // Limpia el input
     setInput("");
 
-    // Genera IDs para los mensajes
+    // Crea ids para mensaje del usuario y mensaje temporal del bot
     const userMessageId = createMessageId();
     const thinkingMessageId = createMessageId();
 
-    // Agrega el mensaje del usuario y el mensaje temporal del bot
+    // Agrega el mensaje del usuario y un "pensando..."
     setMessages((prev) => [
       ...prev,
       { id: userMessageId, from: "user", text: userMessage },
       { id: thinkingMessageId, from: "bot", text: t("thinking"), isThinking: true },
     ]);
 
-    // Solicita respuesta al backend
+    // Consulta la API
     const botResponse = await sendMessageToApi(userMessage);
 
-    // Reemplaza el mensaje temporal por la respuesta real
+    // Reemplaza el mensaje temporal con la respuesta real
     setMessages((prev) => {
       const updated = [...prev];
-
-      // Busca el índice del mensaje temporal
       let targetIndex = -1;
 
       for (let i = updated.length - 1; i >= 0; i--) {
@@ -205,7 +195,6 @@ function App() {
         }
       }
 
-      // Si se encuentra, actualiza el mensaje
       if (targetIndex !== -1) {
         updated[targetIndex] = {
           ...updated[targetIndex],
@@ -218,16 +207,15 @@ function App() {
     });
   };
 
-  // Si el usuario no está autenticado, muestra la pantalla de login
+  // Si no hay autenticación, muestra la pantalla de login
   if (!isAuthenticated) return <Login />;
 
-  // Nombre que se mostrará en la interfaz
+  // Nombre a mostrar en la cabecera
   const displayName = getName() || getUniqueName() || userId;
 
   return (
     <div className="app">
-
-      {/* Encabezado principal */}
+      {/* Encabezado principal con datos del usuario y logout */}
       <Header
         username={userId}
         displayName={displayName}
@@ -236,8 +224,7 @@ function App() {
       />
 
       <div className="app-shell">
-
-        {/* Menú lateral */}
+        {/* Menú lateral de navegación */}
         <SideNav
           activeKey={activeView}
           isOpen={isSideOpen}
@@ -249,42 +236,34 @@ function App() {
         />
 
         <main className="content">
-
-          {/* Vista principal del chat */}
           {activeView === "chat" ? (
             <section className="chat-section">
-
-              {/* Ventana de conversación */}
               <div className="chat-card">
+                {/* Ventana donde se renderizan los mensajes */}
                 <ChatWindow messages={messages} />
               </div>
 
-              {/* Campo de entrada de mensajes */}
-              <div className="chat-input-row">
-                <ChatInput
-                  value={input}
-                  onChange={setInput}
-                  onSend={handleSend}
-                  disabled={loading}
-                />
-              </div>
-
+              {/* Input para escribir y enviar mensajes */}
+              <ChatInput
+                value={input}
+                onChange={setInput}
+                onSend={handleSend}
+                disabled={loading}
+              />
             </section>
           ) : (
-
-            // Vista de configuración (placeholder)
-            <section className="placeholder">
-              <h3>{t("configTitle")}</h3>
-              <p>{t("configMsg")}</p>
+            <section className="config-section">
+              {/* Vista de configuración */}
+              <div className="config-card">
+                <h2>Configuración</h2>
+                <p>Aquí puedes agregar opciones futuras de configuración.</p>
+              </div>
             </section>
-
           )}
-
         </main>
       </div>
     </div>
   );
 }
 
-// Exporta el componente principal
 export default App;
