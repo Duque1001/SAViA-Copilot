@@ -2,7 +2,7 @@
 import "../styles/Chat.css";
 
 // Hooks de React usados en el componente
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 // Componente para renderizar Markdown
 import ReactMarkdown from "react-markdown";
@@ -37,14 +37,20 @@ export default function ChatWindow({ messages }: ChatWindowProps) {
   // Guarda si el auto-scroll está activo
   const autoScrollEnabledRef = useRef(true);
 
-  // Guarda los mensajes que ya terminaron de animarse
-  const [completedTypingIds, setCompletedTypingIds] = useState<Set<string>>(new Set());
+  // Todos los mensajes del bot excepto el último se consideran ya "completados"
+  // para evitar que se vuelvan a animar al remontar el componente.
+  const completedTypingIds = new Set(
+    messages
+      .filter((msg) => msg.from === "bot" && !msg.isThinking)
+      .slice(0, -1)
+      .map((msg) => msg.id)
+  );
 
   // Lleva el scroll al final del chat
   const scrollToBottom = useCallback((force = false) => {
     requestAnimationFrame(() => {
       const el = chatRef.current;
-      if (!el) return; // Sale si no existe el contenedor
+      if (!el) return;
 
       // Si no es forzado y el usuario subió manualmente, no baja
       if (!force && !autoScrollEnabledRef.current) return;
@@ -57,9 +63,9 @@ export default function ChatWindow({ messages }: ChatWindowProps) {
   // Detecta si el usuario está cerca del final del chat
   const handleScroll = useCallback(() => {
     const el = chatRef.current;
-    if (!el) return; // Sale si no existe el contenedor
+    if (!el) return;
 
-    const threshold = 80; // Margen para considerar "cerca del final"
+    const threshold = 80;
     const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
 
     // Activa auto-scroll solo si está cerca del final
@@ -77,10 +83,9 @@ export default function ChatWindow({ messages }: ChatWindowProps) {
   }, [scrollToBottom]);
 
   return (
-    // Contenedor principal del chat con scroll
     <div className="chat-container" ref={chatRef} onScroll={handleScroll}>
       {messages.map((msg) => {
-        // Define si este mensaje debe animarse
+        // Solo se anima el último mensaje terminado del bot
         const shouldAnimate =
           msg.from === "bot" &&
           !msg.isThinking &&
@@ -88,33 +93,23 @@ export default function ChatWindow({ messages }: ChatWindowProps) {
 
         return (
           <div
-            key={msg.id} // Clave única para React
+            key={msg.id}
             className={`message ${msg.from} ${msg.isThinking ? "thinking" : ""}`}
           >
             {msg.from === "bot" ? (
               msg.isThinking ? (
-                // Muestra mensaje temporal mientras el bot responde
                 <div className="message-content typing-content">{msg.text}</div>
               ) : shouldAnimate ? (
-                // Muestra animación de escritura para respuestas nuevas
                 <TypingMessage
-                  key={`typing-${msg.id}`} // Clave única del mensaje animado
-                  text={msg.text} // Texto que se animará
-                  speed={18} // Velocidad de escritura
-                  onTypingProgress={scrollToBottom} // Hace scroll mientras escribe
+                  key={`typing-${msg.id}`}
+                  text={msg.text}
+                  speed={18}
+                  onTypingProgress={() => scrollToBottom()}
                   onComplete={() => {
-                    // Marca el mensaje como completado
-                    setCompletedTypingIds((prev) => {
-                      if (prev.has(msg.id)) return prev; // Evita duplicados
-
-                      const next = new Set(prev); // Copia el set actual
-                      next.add(msg.id); // Agrega el id completado
-                      return next; // Retorna el nuevo set
-                    });
+                    scrollToBottom(true);
                   }}
                 />
               ) : (
-                // Renderiza el mensaje del bot como Markdown normal
                 <div className="message-content markdown-content">
                   <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>
                     {String(msg.text || "").replace(/\\n/g, "\n")}
@@ -122,7 +117,6 @@ export default function ChatWindow({ messages }: ChatWindowProps) {
                 </div>
               )
             ) : (
-              // Renderiza el mensaje del usuario
               <div className="message-content user-content">{msg.text}</div>
             )}
           </div>

@@ -67,6 +67,15 @@ function App() {
   // Referencia para generar ids únicos de mensajes
   const messageIdRef = useRef(0);
 
+  useEffect(() => {
+    if (isAuthenticated && accounts.length > 0) return;
+  
+    setMessages([]);
+    setInput("");
+    setLoading(false);
+    messageIdRef.current = 0;
+  }, [isAuthenticated, accounts.length]);
+
   // Genera ids incrementales para cada mensaje
   const createMessageId = () => {
     messageIdRef.current += 1;
@@ -86,7 +95,15 @@ function App() {
   }, [isAuthenticated, accounts, instance]);
 
   // Cierra sesión y redirige al inicio
+  // const handleLogout = async () => {
+  //   await logoutAndGoHome(instance);
+  // };
+  // Cierra sesión, limpia el chat local y redirige al inicio
   const handleLogout = async () => {
+    setMessages([]);
+    setInput("");
+    setLoading(false);
+    messageIdRef.current = 0;
     await logoutAndGoHome(instance);
   };
 
@@ -198,7 +215,7 @@ function App() {
       if (targetIndex !== -1) {
         updated[targetIndex] = {
           ...updated[targetIndex],
-          text: botResponse,
+          text: botResponse || t("connectError"),
           isThinking: false,
         };
       }
