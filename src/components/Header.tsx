@@ -72,8 +72,11 @@ export default function Header({
           ☰
         </button>
 
-        {/* Logo dinámico */}
-        <img src={logo} alt="SAVIOS" className="logo" />
+        {/* Logo dinámico 
+        <img src={logo} alt="SAVIOS" className="logo" />*/}
+        <div className="logo-container">
+          <img src={logo} alt="SAVIOS" className="logo" />
+        </div>
       </div>
 
       {/* Lado derecho: usuario + logout */}

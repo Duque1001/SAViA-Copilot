@@ -16,7 +16,7 @@
     left: 0;
     right: 0;
     z-index: 100; /* encima del resto */
-    width: 100; /* debería ser 100% */
+    width: 100; 
     margin: 0;
     height: 64px;
     background: var(--clr-header); /* color dinámico */
@@ -30,16 +30,42 @@
 
 /* LADO IZQUIERDO */
 
-.header__left {
+/* .header__left {
     display: flex;
     align-items: center;
-    gap: 12px; /* espacio entre botón y logo */
+    gap: 12px;
 }
 
 .logo {
     height: 30px;
     width: auto;
+} */
+
+.header__left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
+
+.logo-container {
+    height: 100px;
+    width: 200px;          /* ajusta según quieras */
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* o center */
+    flex-shrink: 0;
+}
+
+.logo {
+    max-height: 100%;
+    max-width: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    object-position: left center;
+    display: block;
+}
+
 
 
 /* BOTÓN MENÚ (HAMBURGUESA)*/
