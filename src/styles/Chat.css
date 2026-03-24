@@ -1,6 +1,4 @@
-/* =========================
-   INPUT DEL CHAT
-   ========================= */
+/* INPUT DEL CHAT */
 
 /* Contenedor del input y botón */
 .input-container {
@@ -22,15 +20,15 @@
     padding: 0 20px;
     border-radius: 20px;
     border: none;
-    background-color: #F49A20;
-    color: white;
+    /* background-color: #F49A20; */
+    /* color: white; */
+    background: var(--clr-sidebar-btn); 
+    color: var(--clr-sidebar-text);      
     cursor: pointer;
 }
 
 
-/* =========================
-   CONTENEDOR PRINCIPAL DEL CHAT
-   ========================= */
+/* CONTENEDOR PRINCIPAL DEL CHAT */
 
 .chat-container {
     display: flex !important;
@@ -57,9 +55,7 @@
 }
 
 
-/* =========================
-   MENSAJES
-   ========================= */
+/* MENSAJES */
 
 /* Estilo base de cada mensaje */
 .message {
@@ -94,9 +90,7 @@
 }
 
 
-/* =========================
-   TEXTO EN MODO "TYPING"
-   ========================= */
+/* TEXTO EN MODO "TYPING" */
 
 .typing-content {
     white-space: normal;
@@ -119,9 +113,7 @@
 }
 
 
-/* =========================
-   CONTENIDO MARKDOWN
-   ========================= */
+/* CONTENIDO MARKDOWN */
 
 .markdown-content {
     white-space: normal;
@@ -155,9 +147,7 @@
 }
 
 
-/* =========================
-   ANIMACIÓN "BOT PENSANDO"
-   ========================= */
+/* ANIMACIÓN "BOT PENSANDO" */
 
 /* Animación del mensaje cuando el bot está pensando */
 .message.thinking {
