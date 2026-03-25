@@ -1,6 +1,4 @@
-/* ================================
-   LOGIN A FULL SCREEN, CENTRADO
-   ================================ */
+/* LOGIN A FULL SCREEN, CENTRADO */
 
 /* Capa principal del login ocupando toda la pantalla */
 .login-fullscreen {
@@ -57,10 +55,18 @@
 }
 
 /* Logo dentro de la tarjeta */
-.login-card .logo {
+/* .login-card .logo {
     height: 100px;
     padding: 0;
     margin-bottom: 12px;
+} */
+.login-card .login-logo {
+    display: block;
+    height: 100px;
+    width: auto;
+    max-width: 100%;
+    margin: 0 auto 12px auto;
+    padding: 0;
 }
 
 /* Texto descriptivo debajo del logo */

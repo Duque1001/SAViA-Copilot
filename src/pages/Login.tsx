@@ -168,7 +168,7 @@ export default function Login() {
         <div className="login-card" role="region" aria-label="Login">
 
           {/* Logo y descripción */}
-          <img src={saviaLogo} alt="Savia Logo" className="logo" />
+          <img src={saviaLogo} alt="Savia Logo" className="login-logo" />
           <p>{t("tagline")}</p>
 
           {/* Estado: validando */}
