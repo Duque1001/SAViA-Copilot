@@ -127,7 +127,7 @@
 // }
 
 import "../styles/Chat.css";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
@@ -138,25 +138,20 @@ interface Message {
   from: "user" | "bot";
   text: string;
   isThinking?: boolean;
+  shouldAnimate?: boolean;
 }
 
 interface ChatWindowProps {
   messages: Message[];
+  onBotTypingComplete: (messageId: string) => void;
 }
 
-export default function ChatWindow({ messages }: ChatWindowProps) {
+export default function ChatWindow({
+  messages,
+  onBotTypingComplete,
+}: ChatWindowProps) {
   const chatRef = useRef<HTMLDivElement | null>(null);
   const autoScrollEnabledRef = useRef(true);
-
-  const lastCompletedBotMessageId = useMemo(() => {
-    for (let i = messages.length - 1; i >= 0; i -= 1) {
-      const msg = messages[i];
-      if (msg.from === "bot" && !msg.isThinking) {
-        return msg.id;
-      }
-    }
-    return null;
-  }, [messages]);
 
   const scrollToBottom = useCallback((force = false) => {
     requestAnimationFrame(() => {
@@ -191,7 +186,7 @@ export default function ChatWindow({ messages }: ChatWindowProps) {
         const shouldAnimate =
           msg.from === "bot" &&
           !msg.isThinking &&
-          msg.id === lastCompletedBotMessageId;
+          msg.shouldAnimate === true;
 
         return (
           <div
@@ -209,6 +204,7 @@ export default function ChatWindow({ messages }: ChatWindowProps) {
                   onTypingProgress={scrollToBottom}
                   onComplete={() => {
                     scrollToBottom(true);
+                    onBotTypingComplete(msg.id);
                   }}
                 />
               ) : (

@@ -49,6 +49,7 @@ interface Message {
   from: "user" | "bot";
   text: string;
   isThinking?: boolean; // indica si el bot está "pensando"
+  shouldAnimate?: boolean;
 }
 
 // Vistas disponibles en la app
@@ -182,10 +183,10 @@ function App() {
     localStorage.removeItem("landingSeen");
 
     setSideOpen(false);
-    setMessages([]);
-    setInput("");
-    setLoading(false);
-    messageIdRef.current = 0;
+    // setMessages([]);
+    // setInput("");
+    // setLoading(false);
+    // messageIdRef.current = 0;
 
     setLandingSeen(false);
     setActiveView("chat");
@@ -281,12 +282,11 @@ function App() {
     setMessages((prev) =>
       prev.map((m) =>
         m.id === thinkingId
-          ? { ...m, text: response || t("connectError"), isThinking: false }
+          ? { ...m, text: response || t("connectError"), isThinking: false, shouldAnimate: true }
           : m
       )
     );
   };
-
 
 
   // RENDER CONDICIONAL
@@ -310,6 +310,15 @@ function App() {
   // DATOS VISUALES
   const displayName = getName() || getUniqueName() || userId;
 
+  const handleBotTypingComplete = (messageId: string) => {
+    setMessages((prev) =>
+      prev.map((m) =>
+        m.id === messageId
+          ? { ...m, shouldAnimate: false }
+          : m
+      )
+    );
+  };
 
   // RENDER PRINCIPAL
   return (
@@ -341,7 +350,7 @@ function App() {
             // VISTA CHAT
             <section className="chat-section">
               <div className="chat-card">
-                <ChatWindow messages={messages} />
+                <ChatWindow messages={messages} onBotTypingComplete={handleBotTypingComplete} />
               </div>
 
               <ChatInput
