@@ -18,7 +18,7 @@ interface SideNavProps {
     isOpen: boolean; // Indica si el menú está abierto
     onSelect: (key: ViewKey) => void; // Función para cambiar de vista
     onClose: () => void; // Función para cerrar el menú
-    onGoHome?: () => void; // Nueva prop: volver a Landing
+    onGoHome?: () => void; // Nueva prop: volver a Landing (reinicia conversación)
 }
 
 // Componente del menú lateral
@@ -29,16 +29,16 @@ export default function SideNav({
     onClose,
     onGoHome,
 }: SideNavProps) {
+
     // Hook para obtener textos traducidos
     const { t } = useTranslation(["chat"]);
 
-    // Handler para el botón Home: llama a onGoHome (si existe) y cierra el menú
+    // Handler para el botón Home: reinicia flujo (landing) y cierra menú
     const handleGoHome = () => {
-        try {
-            onGoHome && onGoHome();
-        } finally {
-            onClose();
+        if (onGoHome) {
+            onGoHome();
         }
+        onClose();
     };
 
     return (
@@ -58,7 +58,8 @@ export default function SideNav({
             >
                 {/* Navegación del menú */}
                 <nav className="sidenav__nav" role="navigation" aria-label={t("sidenavNav") || "Main navigation"}>
-                    {/* Botón Home */}
+
+                    {/* Botón Home (reinicia conversación) */}
                     <button
                         className="nav-btn"
                         onClick={handleGoHome}

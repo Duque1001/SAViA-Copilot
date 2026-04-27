@@ -1,16 +1,16 @@
-// Importa React
+// IMPORTS PRINCIPALES
+
+// React (necesario para renderizado)
 import React from "react";
 
-// Importa ReactDOM para renderizar la app en el navegador
+// ReactDOM para montar la app en el DOM
 import ReactDOM from "react-dom/client";
 
-// Clase de MSAL para manejar autenticación con Microsoft Entra
+// MSAL (Microsoft Entra ID)
 import { PublicClientApplication } from "@azure/msal-browser";
-
-// Provider que permite usar MSAL en toda la app React
 import { MsalProvider } from "@azure/msal-react";
 
-// Componente principal de la aplicación
+// Componente raíz de la aplicación
 import App from "./App";
 
 // Configuración de autenticación MSAL
@@ -19,22 +19,36 @@ import { msalConfig } from "./config/authConfig";
 // Estilos globales
 import "./index.css";
 
-// Inicializa configuración de internacionalización (i18n)
+// Inicialización de internacionalización (i18n)
 import "./i18n";
 
-// Crea instancia de autenticación MSAL usando la configuración
+
+// CONFIGURACIÓN MSAL
+
+// Crea la instancia de autenticación usando la configuración definida
 const msalInstance = new PublicClientApplication(msalConfig);
 
-// Renderiza la aplicación React dentro del elemento HTML con id "root"
+
+
+// RENDER DE LA APLICACIÓN
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
 
-  <React.StrictMode> {/* Modo estricto de React para detectar problemas */}
+  <React.StrictMode>
+    {/* 
+      Modo estricto de React:
+      - Detecta problemas potenciales
+      - Solo afecta desarrollo (no producción)
+    */}
 
-    {/* Provee autenticación MSAL a todos los componentes */}
     <MsalProvider instance={msalInstance}>
+      {/* 
+        Proveedor global de autenticación:
+        Permite usar MSAL en toda la app (login, logout, tokens)
+      */}
 
-      {/* Componente principal de la app */}
       <App />
+      {/* Componente principal */}
 
     </MsalProvider>
 

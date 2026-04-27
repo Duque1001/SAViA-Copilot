@@ -1,4 +1,3 @@
-
 /* Contenedor con imagen de fondo (importada en el componente) */
 .landing-root {
     min-height: 100vh;
@@ -15,8 +14,7 @@
     overflow: visible; /* evitar recortes de elementos posicionados */
 }
 
-
-/* Header centrado en la parte superior del card */
+/* Header centrado en la parte superior */
 .landing-header {
     position: absolute;
     top: 18px; /* ajustar según composición */
@@ -35,7 +33,7 @@
     padding: 0;
 }
 
-/* Logo: centrado y escalable, sin márgenes negativos */
+/* Logo: centrado y escalable */
 .logoSavia {
     display: block;
     width: 400px; /* tamaño por defecto para escritorio */
@@ -44,10 +42,10 @@
     margin: 0;
     margin-bottom: -20px;
     margin-top: 0;
-    transition: transform .12s ease;
+    transition: transform 0.12s ease;
 }
 
-/* Título opcional dentro del card (si se usa) */
+/* Título principal */
 .landing-title {
     font-size: 17px;
     font-weight: 700;
@@ -55,51 +53,46 @@
     margin: 0;
 }
 
-/* Subtítulo más pegado al logo */
+/* Subtítulo bajo el logo */
 .landing-subtitle {
     margin: 0;
     font-size: 13px;
-    color: rgba(255,255,255,0.95);
-    font-weight: 600; /* negrita moderada */
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 600;
     line-height: 1.05;
     letter-spacing: 0.4px;
-    transform: translateY(0); /* ajuste fino si hace falta */
+    transform: translateY(0);
     text-transform: uppercase;
 }
 
-/* Cuerpo (body) del contenido dentro del card */
+/* Cuerpo del contenido */
 .landing-body {
     width: 400px;
     max-width: 760px;
     margin: 0 auto;
     margin-left: 100px;
     margin-top: 250px; /* deja espacio para el header absoluto */
-    color: rgba(255,255,255,0.92);
+    color: rgba(255, 255, 255, 0.92);
     text-align: left;
     padding: 0 8px;
 }
 
-    .landing-body p {
-        margin: 0 0 12px 0;
-        line-height: 1.4;
-    }
-
-.landing-list {
-    margin: 0 0 0 18px;
+.landing-body p {
+    margin: 0 0 12px 0;
+    line-height: 1.4;
 }
 
-/* Footer / botones */
+/* Footer / botón */
 .landing-footer {
     margin-top: 8px;
     margin-bottom: 6px;
     display: flex;
-    /*justify-content: center;*/
     gap: 2px;
     z-index: 3;
     position: relative;
 }
 
-/* Imagen usada como botón (opción A) */
+/* Imagen usada como botón */
 .landing-btnHabla {
     display: inline-block;
     width: 320px; /* ajustar según diseño */
@@ -110,7 +103,7 @@
     outline: none;
     user-select: none;
     -webkit-user-drag: none;
-    transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
     border-radius: 12px;
     background: transparent;
     padding: 0;
@@ -118,20 +111,18 @@
     justify-content: right;
 }
 
-    /* Hover / focus */
-    .landing-btnHabla:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 24px rgba(0,0,0,0.25);
-    }
+/* Hover / focus */
+.landing-btnHabla:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+}
 
-    .landing-btnHabla:focus {
-        box-shadow: 0 0 0 4px rgba(11,95,255,0.18);
-        transform: translateY(-2px);
-    }
+.landing-btnHabla:focus {
+    box-shadow: 0 0 0 4px rgba(11, 95, 255, 0.18);
+    transform: translateY(-2px);
+}
 
-
-
-/*  Ajustes responsive */
+/* Ajustes responsive */
 @media (max-width: 920px) {
     .logoSavia {
         width: 220px;
@@ -142,17 +133,12 @@
         padding: 0 12px;
     }
 
-    .landing-btnHabla, .landing-btnHablaBtn {
+    .landing-btnHabla {
         width: 300px;
     }
 }
 
 @media (max-width: 720px) {
-    .landing-card {
-        padding: 20px;
-        gap: 12px;
-    }
-
     .landing-header {
         top: 14px;
         width: calc(100% - 32px);
@@ -173,7 +159,7 @@
         margin-top: 64px;
     }
 
-    .landing-btnHabla, .landing-btnHablaBtn {
+    .landing-btnHabla {
         width: 240px;
     }
 }
@@ -206,24 +192,19 @@
         padding: 0 10px;
     }
 
-    .landing-btnHabla, .landing-btnHablaBtn {
+    .landing-btnHabla {
         width: 200px;
     }
 }
 
-/*  Utilidades y seguridad visual */
-/* Asegura que overlay no bloquee interacciones */
-.landing-overlay {
-    pointer-events: none;
-}
-
-/* Evitar que imágenes de botón se seleccionen o arrastren */
-.landing-btnHabla, .landing-btnHablaBtn, .logoSavia {
+/* Evitar que imágenes se seleccionen o arrastren */
+.landing-btnHabla,
+.logoSavia {
     -webkit-user-drag: none;
     user-select: none;
 }
 
-/* Evitar recortes inesperados en contenedores padres */
-.landing-root, .landing-card {
+/* Evitar recortes inesperados */
+.landing-root {
     overflow: visible;
 }

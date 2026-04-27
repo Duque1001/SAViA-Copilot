@@ -1,19 +1,15 @@
 /* Variables de estilos para el sidenav */
 :root {
     --sidenav-w: 220px; /* ancho del menú lateral */
-    --clr-accent: #440C6C; /* color principal */
-    --clr-accents: #F49A20; /* color botones */
-    --clr-accent-dark: #d89f00; /* color hover */
-
-    --clr-sidebar-btn: #F49A20;
-    --clr-sidebar-text: #ffffff;
+    --clr-sidebar-btn: #F49A20;   /* color de fondo de botones */
+    --clr-sidebar-text: #ffffff;  /* color de texto de botones */
 }
 
 /* Overlay oscuro que aparece en mobile cuando el menú está abierto */
 .overlay {
     position: fixed;
     inset: 0; /* ocupa toda la pantalla */
-    background: rgba(0,0,0,.2);
+    background: rgba(0, 0, 0, .2);
     opacity: 0; /* oculto por defecto */
     pointer-events: none; /* no interactivo cuando está oculto */
     transition: .2s ease;
@@ -31,25 +27,9 @@
     width: var(--sidenav-w);
     padding: 16px;
     background: transparent;
-}
-
-.sidenav__footer {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: 0px;
-    margin-top: auto;
-}
-
-.sidenav__brand {
-    display: block;
-    margin-bottom: 0;
-}
-
-.sidenav__brand-logo {
-    width: 180px;
-    height: auto;
-    display: block;
+    height: calc(100vh - 64px - 48px - 32px); /* alineado con layout general */
 }
 
 /* Contenedor de navegación */
@@ -63,8 +43,6 @@
 .nav-btn {
     width: 70%;
     text-align: center;
-    /* background: var(--clr-accents); */
-    /* color: #fff; */
     background: var(--clr-sidebar-btn);
     color: var(--clr-sidebar-text);
     font-weight: 700;
@@ -85,11 +63,30 @@
     outline: 2px solid #fff;
 }
 
+/* Footer del menú (marca + redes sociales) */
+.sidenav__footer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    margin-top: auto; /* empuja el contenido al fondo */
+    padding-top: 12px;
+    justify-content: flex-start;
+}
+
+.sidenav__brand {
+    display: block;
+    margin-bottom: 0;
+}
+
+.sidenav__brand-logo {
+    width: 180px;
+    height: auto;
+    display: block;
+}
 
 /* SIDENAV EN MOBILE */
-
 @media (max-width: 800px) {
-
     /* Panel lateral deslizante */
     .sidenav {
         position: fixed;
@@ -109,30 +106,8 @@
 
     /* Botones dentro del menú en mobile */
     .sidenav__nav .nav-btn {
-        /* background: var(--clr-accent); */
-        /* color: #ffff; */
         background: var(--clr-sidebar-btn);
         color: var(--clr-sidebar-text);
         font-weight: 700;
     }
-}
-
-
-/* ESTRUCTURA VERTICAL */
-
-/* Permite distribuir contenido arriba y abajo */
-.sidenav {
-    display: flex;
-    flex-direction: column;
-
-    /* Ajusta altura para alinearse con el layout del chat */
-    height: calc(100vh - 64px - 48px - 32px);
-}
-
-/* Footer del menú (redes sociales) */
-.sidenav__footer {
-    margin-top: auto; /* empuja el contenido al fondo */
-    padding-top: 12px;
-    display: flex;
-    justify-content: flex-start; /* alineado a la izquierda */
 }

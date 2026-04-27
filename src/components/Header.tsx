@@ -28,7 +28,6 @@ export default function Header({
   onLogout,
   onToggleMenu,
 }: HeaderProps) {
-
   // Hook de traducción (namespaces: common y chat)
   const { t } = useTranslation(["common", "chat"]);
 
@@ -61,7 +60,6 @@ export default function Header({
 
   return (
     <header className="header">
-
       {/* Lado izquierdo: menú + logo */}
       <div className="header__left">
         <button

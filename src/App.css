@@ -1,60 +1,19 @@
 /* RESETEO INICIAL */
 
-   #root {
+#root {
     font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; /* fuente base */
     margin: 0;
     padding: 0; /* el layout maneja el espaciado */
     text-align: initial; /* evita centrado global */
 }
 
-
-/* LOGO Y ANIMACIONES */
-
-/* .logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
-} */
-
-.logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa); /* efecto glow */
-}
-
-.logo.react:hover {
-    filter: drop-shadow(0 0 2em #61dafbaa); /* glow React */
-}
-
-/* Animación de rotación */
-@keyframes logo-spin {
-    from { transform: rotate(0) }
-    to { transform: rotate(360deg) }
-}
-
-/* Solo si el usuario permite animaciones */
-@media (prefers-reduced-motion: no-preference) {
-    a:nth-of-type(2) .logo {
-        animation: logo-spin infinite 20s linear;
-    }
-}
-
-
 /* ELEMENTOS GENERALES */
-
-.card {
-    padding: 2em; /* contenedor tipo tarjeta */
-}
-
-.read-the-docs {
-    color: #888; /* texto secundario */
-}
 
 .app {
     min-height: 100%; /* ocupa toda la altura */
 }
 
-
-/* VARIABLES GLOBALES*/
+/* VARIABLES GLOBALES */
 
 :root {
     --clr-bg: #EFEFEF;       /* fondo general */
@@ -65,60 +24,59 @@
 }
 
 /* Base global */
-html, body, #root {
+html,
+body,
+#root {
     height: 100%;
     background: var(--clr-bg);
     width: 100%;
     overflow-x: hidden; /* evita scroll lateral */
 }
 
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
 
 /* LAYOUT PRINCIPAL */
 
 .app-shell {
     width: 100%;
+    max-width: 100%;
     margin: 0 auto;
-    padding: 16px;
+    padding: 16px 8px 16px 8px;
     display: grid;
-
-    grid-template-columns: 220px 1fr; /* sidebar + contenido */
-    gap: 16px;
+    grid-template-columns: 190px minmax(0, 1fr);
+    gap: 8px;
 }
 
 .content {
-    min-height: calc(100vh - 64px - 32px); /* altura disponible */
-    padding: 8px;
+    min-height: calc(100vh - 64px - 32px);
+    padding: 0;
+    min-width: 0; /* Importante para que no desborde */
 }
-
 
 /* SECCIÓN CHAT */
 
 .chat-section {
     display: grid;
-    grid-template-rows: 1fr auto; /* mensajes + input */
+    grid-template-rows: 1fr;
     gap: 12px;
-
     height: calc(100vh - 64px - 48px - 32px);
+    min-width: 0; /* evita que el contenido empuje hacia la derecha */
 }
 
 .chat-card {
     background: var(--clr-surface);
     border: 1px solid var(--clr-border);
-    border-radius: 12px;
-    padding: 8px;
-    /* padding: 0; */
+    border-radius: 16px;
+    padding: 0;
     overflow: hidden;
-    width: 90%;
-    height: 90%;
-    /* width: 100%;
-    height: 100%;
-    min-height: 600px; */
-}
-
-.chat-input-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    width: 100%;
+    max-width: 100%;
+    height: calc(100vh - 120px);
+    min-height: 620px;
 }
 
 /* Placeholder visual */
@@ -128,7 +86,6 @@ html, body, #root {
     border-radius: 12px;
     padding: 24px;
 }
-
 
 /* PANTALLAS DE VALIDACIÓN */
 
@@ -167,7 +124,6 @@ html, body, #root {
     justify-content: center;
 }
 
-
 /* BOTONES */
 
 .btn {
@@ -188,11 +144,9 @@ html, body, #root {
     color: #222;
 }
 
-
 /* RESPONSIVE GENERAL */
 
 @media (max-width: 1200px) {
-
     .app-shell {
         grid-template-columns: 1fr; /* elimina sidebar fijo */
     }
@@ -208,13 +162,11 @@ html, body, #root {
 }
 
 @media (min-width: 1600px) {
-
     .app-shell {
         padding-left: 24px;
         padding-right: 24px;
     }
 }
-
 
 /* CONFIGURACIÓN (UI SETTINGS) */
 
@@ -280,11 +232,6 @@ html, body, #root {
     gap: 20px;
 }
 
-/* .config-row label {
-    font-size: 1.05rem;
-    font-weight: 500;
-    color: #2f3153;
-} */
 .config-row label {
     flex: 1;
     min-width: 0;
@@ -303,13 +250,6 @@ html, body, #root {
 }
 
 /* input color */
-/* .config-row input[type="color"] {
-    width: 56px;
-    height: 28px;
-    border: 1px solid #cfcbdc;
-    border-radius: 6px;
-    cursor: pointer;
-} */
 .config-row input[type="color"] {
     flex: 0 0 56px;
     width: 56px;
@@ -325,10 +265,6 @@ html, body, #root {
 }
 
 /* mejora visual del color picker */
-/* .config-row input[type="color"]::-webkit-color-swatch {
-    border: none;
-    border-radius: 5px;
-} */
 .config-row input[type="color"]::-webkit-color-swatch-wrapper {
     padding: 0;
 }
@@ -338,11 +274,9 @@ html, body, #root {
     border-radius: 4px;
 }
 
-
 /* RESPONSIVE CONFIG */
 
 @media (max-width: 900px) {
-
     .config-columns {
         grid-template-columns: 1fr; /* una sola columna */
     }

@@ -38,39 +38,32 @@
 /* Tamaño de íconos en pantallas medianas */
 @media (max-width: 768px) {
   .social-links img {
-      width: 36px;
-      height: 36px;
+    width: 36px;
+    height: 36px;
   }
 }
 
 /* Tamaño en pantallas muy pequeñas */
 @media (max-width: 420px) {
   .social-links img {
-      width: 40px;
-      height: 40px;
+    width: 40px;
+    height: 40px;
   }
-}
-
-/* Ajuste adicional para íconos dentro del sidenav */
-.sidenav .social-links {
-  margin-left: 0;
-  justify-content: flex-start;
 }
 
 /* Estilo especial para redes dentro del menú en mobile */
 @media (max-width: 800px) {
-
   /* Fondo blanco para cada ícono */
   .sidenav .social-links a {
-      background: white;
-      border-radius: 12px;
-      padding: 8px;
+    background: white;
+    border-radius: 12px;
+    padding: 8px;
   }
 
   /* Íconos más pequeños dentro del sidenav */
   .sidenav .social-links img {
-      width: 30px;
-      height: 30px;
-      display: block;
+    width: 30px;
+    height: 30px;
+    display: block;
   }
 }

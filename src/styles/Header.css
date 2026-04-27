@@ -1,45 +1,39 @@
 /* VARIABLES GLOBALES */
+
    :root {
-    --clr-header: #5b2b82; /* color del header */
-    --clr-bg: #ffffff;     /* fondo general */
-    --clr-text: #222;      /* texto base */
-    --clr-accent: #440C6C; /* color base botones (antiguo logout) */
-    --clr-accent-dark: #d89f00; /* hover antiguo */
+    --clr-header: #5b2b82;       /* color del header */
+    --clr-bg: #ffffff;           /* fondo general */
+    --clr-text: #222;            /* texto base */
+
+    /* Sistema dinámico (configuración) */
+    --clr-logout-btn: #4B0F6B;   /* fondo botón */
+    --clr-logout-text: #ffffff;  /* texto botón */
 }
 
 
 /* HEADER */
 
 .header {
-    position: sticky; /* fijo al hacer scroll */
+    position: sticky;
     top: 0;
     left: 0;
     right: 0;
-    z-index: 100; /* encima del resto */
-    width: 100; 
+    z-index: 100;
+    width: 100%;
+    box-sizing: border-box; /* IMPORTANTE */
     margin: 0;
     height: 64px;
-    background: var(--clr-header); /* color dinámico */
+    background: var(--clr-header);
     color: #fff;
     display: flex;
-    justify-content: space-between; /* separa lados */
+    justify-content: space-between;
     align-items: center;
-    padding: 0 16px;
+    padding: 0 16px 0 16px; /* más controlado */
+    overflow: hidden; /* evita desborde visual */
 }
 
 
 /* LADO IZQUIERDO */
-
-/* .header__left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.logo {
-    height: 30px;
-    width: auto;
-} */
 
 .header__left {
     display: flex;
@@ -49,10 +43,10 @@
 
 .logo-container {
     height: 100px;
-    width: 200px;          /* ajusta según quieras */
+    width: 200px;
     display: flex;
     align-items: center;
-    justify-content: flex-start; /* o center */
+    justify-content: flex-start;
     flex-shrink: 0;
 }
 
@@ -67,8 +61,7 @@
 }
 
 
-
-/* BOTÓN MENÚ (HAMBURGUESA)*/
+/* BOTÓN MENÚ (HAMBURGUESA) */
 
 .menu-toggle {
     display: none; /* oculto en desktop */
@@ -84,15 +77,17 @@
 /* LADO DERECHO */
 
 .header__right {
-    margin-left: auto; /* empuja a la derecha */
+    margin-left: auto;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
+    padding-right: 4px; /* pequeño ajuste */
+    flex-shrink: 0;
 }
 
 .welcome {
     font-size: 12px;
-    opacity: 0.95; /* leve transparencia */
+    opacity: 0.95;
 }
 
 
@@ -107,16 +102,21 @@
 }
 
 
-/* BOTÓN LOGOUT (ANTIGUO) */
+/* BOTÓN LOGOUT (DINÁMICO) */
 
 .btn--logout {
-    background: var(--clr-accent); /* color antiguo */
-    color: #fff;
-    font-size: 12px;
+    background-color: var(--clr-logout-btn);
+    color: var(--clr-logout-text) !important;
+    border: none;
+    border-radius: 20px;
+    padding: 6px 14px;
+    transition: all 0.3s ease;
 }
 
 .btn--logout:hover {
-    background: var(--clr-accent-dark); /* hover antiguo */
+    color: var(--clr-logout-text) !important;
+    opacity: 0.9;
+    transform: translateY(-1px);
 }
 
 
@@ -124,30 +124,6 @@
 
 @media (max-width: 992px) {
     .menu-toggle {
-        display: inline-block; /* visible en mobile */
+        display: inline-block;
     }
-}
-
-
-/* NUEVO SISTEMA DINÁMICO (CONFIGURACIÓN) */
-:root {
-    --clr-logout-btn: #4B0F6B;   /* fondo dinámico botón */
-    --clr-logout-text: #ffffff;  /* texto dinámico */
-}
-
-/* Sobrescribe estilos anteriores del botón */
-.btn--logout {
-    background-color: var(--clr-logout-btn); /* color configurable */
-    color: var(--clr-logout-text) !important; /* fuerza prioridad */
-    border: none;
-    border-radius: 20px;
-    padding: 6px 14px;
-    transition: all 0.3s ease;
-}
-
-/* Hover moderno */
-.btn--logout:hover {
-    color: var(--clr-logout-text) !important;
-    opacity: 0.9;
-    transform: translateY(-1px); /* efecto elevación */
 }

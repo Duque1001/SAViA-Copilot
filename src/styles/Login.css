@@ -35,7 +35,7 @@
 /* Efecto hover de la tarjeta */
 .login-card:hover {
     transform: translateY(-1px);
-    box-shadow: 0 14px 34px rgba(0,0,0,.14);
+    box-shadow: 0 14px 34px rgba(0, 0, 0, .14);
 }
 
 /* Botón principal de login */
@@ -55,11 +55,6 @@
 }
 
 /* Logo dentro de la tarjeta */
-/* .login-card .logo {
-    height: 100px;
-    padding: 0;
-    margin-bottom: 12px;
-} */
 .login-card .login-logo {
     display: block;
     height: 100px;
@@ -75,7 +70,7 @@
     color: #CCCACA;
 }
 
-/* ALERTAS (errores o avisos */
+/* ALERTAS (errores o avisos) */
 
 .login-alert {
     margin-top: 12px;
@@ -92,42 +87,6 @@
     border-color: #f5c2c7;
 }
 
-/* Alerta de advertencia */
-.login-alert--warn {
-    background: #fff4e5;
-    color: #8a6d3b;
-    border-color: #ffe0a3;
-}
-
-/* Contenedor de botones dentro de alertas */
-.login-alert__actions {
-    margin-top: 12px;
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-}
-
-/* Estilo base de botones dentro de alertas */
-.login-alert__actions button {
-    border: none;
-    border-radius: 20px;
-    padding: 8px 14px;
-    cursor: pointer;
-    font-weight: 600;
-}
-
-/* Botón reintentar */
-.login-alert__actions .btn-retry {
-    background: #5b2b7a;
-    color: #fff;
-}
-
-/* Botón cerrar sesión */
-.login-alert__actions .btn-logout {
-    background: #ddd;
-    color: #222;
-}
-
 /* ACCESIBILIDAD */
 
 /* Desactiva animaciones si el usuario lo prefiere */
@@ -136,7 +95,7 @@
     .login-card:hover {
         transition: none;
         transform: none;
-        box-shadow: 0 10px 28px rgba(0,0,0,.12);
+        box-shadow: 0 10px 28px rgba(0, 0, 0, .12);
     }
 }
 

@@ -11,7 +11,6 @@ export default function SocialLinks() {
   return (
     // Contenedor de los íconos de redes sociales
     <div className="social-links" aria-label="Redes sociales">
-
       {/* Enlace a Instagram */}
       <a
         href="https://www.instagram.com/savioslatam/"
@@ -44,7 +43,6 @@ export default function SocialLinks() {
       >
         <img src={webIcon} alt="Web" /> {/* Ícono del sitio web */}
       </a>
-
     </div>
   );
 }

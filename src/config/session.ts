@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable no-empty */
 // Tipos e importaciones de MSAL para manejar cuentas, tokens y errores de autenticación
 import type { AccountInfo, IPublicClientApplication } from "@azure/msal-browser";
 import { InteractionRequiredAuthError } from "@azure/msal-browser";
@@ -63,35 +65,22 @@ export const clearSession = () => {
   localStorage.removeItem(UNIQUE_NAME_KEY);
 };
 
-// Obtiene el access token guardado
-export const getAccessToken = (): string | null =>
-  localStorage.getItem(ACCESS_TOKEN_KEY);
+// Obtiene datos almacenados
+export const getAccessToken = () => localStorage.getItem(ACCESS_TOKEN_KEY);
+export const getUsername = () => localStorage.getItem(USERNAME_KEY);
+export const getName = () => localStorage.getItem(NAME_KEY);
+export const getUniqueName = () => localStorage.getItem(UNIQUE_NAME_KEY);
+export const getIdToken = () => localStorage.getItem(ID_TOKEN_KEY);
 
-// Obtiene el username guardado
-export const getUsername = (): string | null =>
-  localStorage.getItem(USERNAME_KEY);
-
-// Obtiene el nombre guardado
-export const getName = (): string | null =>
-  localStorage.getItem(NAME_KEY);
-
-// Obtiene el unique_name guardado
-export const getUniqueName = (): string | null =>
-  localStorage.getItem(UNIQUE_NAME_KEY);
-
-// Obtiene el id token guardado
-export const getIdToken = (): string | null =>
-  localStorage.getItem(ID_TOKEN_KEY);
-
-// Guarda el id token en localStorage
+// Guarda el id token
 export const setIdToken = (idToken: string) => {
   localStorage.setItem(ID_TOKEN_KEY, idToken || "");
 };
 
-// Extrae el usuario desde un email
+// Extrae usuario desde email
 const getUserFromEmail = (email: string): string => email.split("@")[0];
 
-// Extrae un username amigable desde la cuenta autenticada
+// Extrae username amigable
 const getUserFromAccount = (account: AccountInfo): string => {
   const email =
     (account.idTokenClaims as any)?.preferred_username || account.username;
@@ -99,7 +88,7 @@ const getUserFromAccount = (account: AccountInfo): string => {
   return getUserFromEmail(email);
 };
 
-// Obtiene un idToken silenciosamente y actualiza datos del usuario en sesión
+// Obtiene idToken y actualiza datos de sesión
 export const acquireIdToken = async (
   instance: IPublicClientApplication,
   account: AccountInfo
@@ -130,53 +119,7 @@ export const acquireIdToken = async (
   }
 };
 
-// Obtiene un idToken fresco antes de llamar la API. Si no puede renovarlo silenciosamente, retorna null.
-export const acquireValidIdToken = async (
-  instance: IPublicClientApplication,
-  account: AccountInfo
-): Promise<string | null> => {
-  try {
-    const res = await instance.acquireTokenSilent({
-      account,
-      scopes: ["openid", "profile", "email"],
-      forceRefresh: true,
-    });
-
-    const idTok = (res as any)?.idToken || "";
-
-    // Si el token no existe o está vencido, no se usa
-    if (!idTok || isJwtExpired(idTok, 30)) {
-      return null;
-    }
-
-    // Guarda token y datos del usuario actualizados
-    setIdToken(idTok);
-
-    const claims = decodeJwtPayload(idTok);
-
-    const name = claims?.name ?? claims?.preferred_username ?? "";
-    const uniqueName =
-      claims?.unique_name ?? claims?.preferred_username ?? claims?.upn ?? "";
-
-    try {
-      if (name) localStorage.setItem(NAME_KEY, name);
-      if (uniqueName) localStorage.setItem(UNIQUE_NAME_KEY, uniqueName);
-    } catch {}
-
-    return idTok;
-  } catch (err) {
-
-    // Si MSAL requiere interacción, obliga a nuevo login
-    if (err instanceof InteractionRequiredAuthError) {
-      return null;
-    }
-
-    console.error("[acquireValidIdToken] Error:", err);
-    return null;
-  }
-};
-
-// Obtiene access token para consumir APIs protegidas
+// Obtiene access token para APIs protegidas
 export const acquireAccessToken = async (
   instance: IPublicClientApplication,
   account: AccountInfo
@@ -187,13 +130,11 @@ export const acquireAccessToken = async (
 
   const username = getUserFromAccount(account);
 
-  // Si no hay scopes configurados, solo guarda usuario
   if (scopes.length === 0) {
     saveSession("", username);
     return null;
   }
 
-  // Procesa la respuesta del token y actualiza datos del usuario
   const handleTokenResponse = (accessToken: string) => {
     saveSession(accessToken, username);
 
@@ -212,12 +153,9 @@ export const acquireAccessToken = async (
   };
 
   try {
-    
-    // Intenta obtener token sin interacción del usuario
     const res = await instance.acquireTokenSilent({ scopes, account });
     return handleTokenResponse(res.accessToken || "");
   } catch (err) {
-    // Si requiere interacción, abre popup para pedir token
     if (err instanceof InteractionRequiredAuthError) {
       const res = await instance.acquireTokenPopup({ scopes, account });
       return handleTokenResponse(res.accessToken || "");
@@ -229,7 +167,7 @@ export const acquireAccessToken = async (
   }
 };
 
-// Limpia sesión local y redirige al inicio
+// Logout
 export const logoutAndGoHome = async (
   instance: IPublicClientApplication
 ): Promise<void> => {
@@ -244,121 +182,5 @@ export const logoutAndGoHome = async (
   } catch (error) {
     console.error("[logoutAndGoHome] Error:", error);
     window.location.replace("/");
-  }
-};
-
-// Estructura esperada cuando la validación del token es exitosa
-export interface TokenValidationResponse {
-  id: string;
-  nombre: string;
-  email: string | null;
-}
-
-// Resultado de la validación del token
-export interface TokenValidationResult {
-  ok: boolean;
-  reason?: string;
-  data?: TokenValidationResponse | null;
-}
-
-// Valida el idToken contra el backend o servicio validador
-export const validateTokenDetailed = async (
-  idToken: string
-): Promise<TokenValidationResult> => {
-  const validationUrl = import.meta.env.VITE_TOKEN_VALIDATION_URL;
-
-  // Verifica que exista URL configurada
-  if (!validationUrl) {
-    return {
-      ok: false,
-      reason: "No hay URL de validación configurada (VITE_TOKEN_VALIDATION_URL)",
-    };
-  }
-
-  // Verifica que sí se recibió token
-  if (!idToken) {
-    return { ok: false, reason: "No se recibió un ID token para validar" };
-  }
-
-  // Si ya expiró localmente, evita consultar el backend
-  if (isJwtExpired(idToken, 0)) {
-    return {
-      ok: false,
-      reason: "Tu sesión ha expirado. Por favor vuelve a iniciar sesión.",
-    };
-  }
-
-  try {
-    // Llama al servicio validador enviando el token en Authorization
-    const response = await fetch(validationUrl, {
-      method: "GET",
-      headers: {
-        "ngrok-skip-browser-warning": "true",
-        Authorization: `Bearer ${idToken}`,
-        Accept: "application/json",
-      },
-    });
-
-    const contentType = response.headers.get("content-type") || "";
-
-    // Si backend respondió con error HTTP
-    if (!response.ok) {
-      return {
-        ok: false,
-        reason: `No fue posible validar tu sesión (HTTP ${response.status}).`,
-      };
-    }
-
-    // Verifica que la respuesta sea JSON
-    if (!contentType.toLowerCase().includes("application/json")) {
-      return {
-        ok: false,
-        reason: "El validador devolvió una respuesta no-JSON.",
-      };
-    }
-
-    const data: any = await response.json();
-
-    // Formato actual esperado del backend
-    if ((data?.id ?? null) || (data?.nombre ?? data?.name ?? null)) {
-      if (!data?.id && !data?.nombre && !data?.name) {
-        return {
-          ok: false,
-          reason: "Respuesta inválida del validador (faltan id y nombre).",
-        };
-      }
-
-      const normalized: TokenValidationResponse = {
-        id: String(data?.id ?? "N/A"),
-        nombre: String(data?.nombre ?? data?.name ?? "N/A"),
-        email: data?.email ?? null,
-      };
-
-      return { ok: true, data: normalized };
-    }
-
-    // Compatibilidad con formato legacy del backend
-    if (data?.is_valid?.status === "OK") {
-      const nombre = data?.is_valid?.nombre ?? data?.is_valid?.name ?? "N/A";
-      const id = data?.is_valid?.id ?? "N/A";
-      const email = data?.is_valid?.email ?? null;
-
-      if (!data?.is_valid?.id && !data?.is_valid?.name && !data?.is_valid?.nombre) {
-        return {
-          ok: false,
-          reason: "Respuesta inválida del validador (legacy sin id ni nombre).",
-        };
-      }
-
-      return { ok: true, data: { id, nombre, email } };
-    }
-
-    // Si la estructura no coincide con ningún formato conocido
-    return { ok: false, reason: "Respuesta desconocida del validador." };
-  } catch (error) {
-    console.error("[validateTokenDetailed] Error:", error);
-
-    // Error de red o fallo inesperado
-    return { ok: false, reason: "Error de red al validar tu sesión." };
   }
 };
