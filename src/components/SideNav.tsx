@@ -80,7 +80,8 @@ export default function SideNav({
                         {t("sidenavChat")}
                     </button>
 
-                    {/* Botón para ir a la vista de configuración */}
+                    {/* CAMBIO COMFAMA */}
+                    {/* Botón para ir a la vista de configuración
                     <button
                         className={`nav-btn ${activeKey === "config" ? "nav-btn--active" : ""}`}
                         onClick={() => {
@@ -90,7 +91,7 @@ export default function SideNav({
                         type="button"
                     >
                         {t("sidenavConfig")}
-                    </button>
+                    </button> */}
                 </nav>
 
                 {/* Sección inferior con enlaces o redes sociales */}
