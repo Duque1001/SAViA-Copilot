@@ -42,13 +42,13 @@ function decodeJwtPayload(token: string): any | null {
 }
 
 // Verifica si un token JWT ya expiró o está por expirar
-function isJwtExpired(token: string, skewSec = 60): boolean {
-  const payload = decodeJwtPayload(token);
-  if (!payload?.exp) return true;
+// function isJwtExpired(token: string, skewSec = 60): boolean {
+//   const payload = decodeJwtPayload(token);
+//   if (!payload?.exp) return true;
 
-  const now = Math.floor(Date.now() / 1000);
-  return now + skewSec >= Number(payload.exp);
-}
+//   const now = Math.floor(Date.now() / 1000);
+//   return now + skewSec >= Number(payload.exp);
+// }
 
 // Guarda access token y username en sesión local
 export const saveSession = (accessToken: string, username: string) => {

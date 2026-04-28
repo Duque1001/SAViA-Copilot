@@ -108,12 +108,14 @@ function App() {
     // Claves usadas en localStorage
     const CHAT_TOKEN_KEY = "savio_token";
     const CHAT_CONVERSATION_KEY = "savio_conversation_id";
+    const CHAT_WATERMARK_KEY = "savio_watermark";
 
     // Limpia solo datos del chat
     const clearChatStorage = () => {
       console.warn("Limpiando solo datos del chat en localStorage...");
       localStorage.removeItem(CHAT_TOKEN_KEY);
       localStorage.removeItem(CHAT_CONVERSATION_KEY);
+      localStorage.removeItem(CHAT_WATERMARK_KEY);
     };
 
     // Genera un nuevo token Direct Line
@@ -204,6 +206,7 @@ function App() {
         // Intenta recuperar sesión previa
         let token = localStorage.getItem(CHAT_TOKEN_KEY);
         let conversationId = localStorage.getItem(CHAT_CONVERSATION_KEY);
+        let watermark = localStorage.getItem(CHAT_WATERMARK_KEY);
 
         console.log("Token guardado existe:", !!token);
         console.log("ConversationId guardado:", conversationId);
@@ -246,6 +249,9 @@ function App() {
         // Crea conexión Direct Line
         const dl = createDirectLine({
           token: token as string,
+          conversationId: conversationId as string,
+          watermark: watermark || undefined,
+          webSocket: false,
         });
 
         // Monitorea estado de conexión
@@ -266,6 +272,14 @@ function App() {
         dl.activity$.subscribe({
           next: (activity) => {
             console.log("Actividad Direct Line:", activity);
+
+            if (activity?.id) {
+              const activityWatermark = activity.id.split("|").pop();
+        
+              if (activityWatermark) {
+                localStorage.setItem(CHAT_WATERMARK_KEY, activityWatermark);
+              }
+            }
           },
           error: (err) => {
             console.error("Error en activity$:", err);
